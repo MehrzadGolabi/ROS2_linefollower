@@ -13,11 +13,18 @@ def generate_launch_description():
     
     # Launch arguments
     use_sim_time = LaunchConfiguration('use_sim_time')
+    camera_topic = LaunchConfiguration('camera_topic')
     
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
-        default_value='true',
+        default_value='false',
         description='Use simulation time'
+    )
+
+    declare_camera_topic = DeclareLaunchArgument(
+        'camera_topic',
+        default_value='/camera/image_raw',
+        description='Camera topic to subscribe to'
     )
     
     # Config file path
@@ -35,11 +42,15 @@ def generate_launch_description():
         output='screen',
         parameters=[
             config_file,
-            {'use_sim_time': use_sim_time}
+            {
+                'use_sim_time': use_sim_time,
+                'camera_topic': camera_topic
+            }
         ],
     )
 
     return LaunchDescription([
         declare_use_sim_time,
+        declare_camera_topic,
         linefollower_node,
     ])

@@ -1,7 +1,7 @@
 linefollower_cv_node:
   ros__parameters:
     # Topic configuration
-    camera_topic: "/camera/depth/image_raw/image"
+    camera_topic: "/camera/image_raw"
     cmd_vel_topic: "/joy_vel"
     
     # Speed parameters (dynamic speed control)
@@ -9,15 +9,15 @@ linefollower_cv_node:
     min_linear_speed: 0.15   # Min speed during sharp curves
     
     # PID gains for steering control
-    kp: 0.015    # Proportional gain - main steering response
+    kp: 0.03     # Proportional gain - main steering response
     ki: 0.0001   # Integral gain - corrects steady-state error
-    kd: 0.008    # Derivative gain - dampens oscillation, anticipates changes
+    kd: 0.016    # Derivative gain - dampens oscillation, anticipates changes
     
     # Region of Interest (ROI) - crop area from image
-    roi_y_start: 300
-    roi_y_end: 480
-    roi_x_start: 120
-    roi_x_end: 520
+    roi_y_start: 150
+    roi_y_end: 240
+    roi_x_start: 60
+    roi_x_end: 260
     
     # Multi-point detection rows (percentage of ROI height from top)
     # Near = close to robot (react now)

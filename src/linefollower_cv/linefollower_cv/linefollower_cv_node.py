@@ -26,23 +26,23 @@ class LinefollowerCvNode(Node):
         super().__init__('linefollower_cv_node')
         
         # Declare parameters with defaults
-        self.declare_parameter('camera_topic', '/camera/depth/image_raw/image')
+        self.declare_parameter('camera_topic', '/camera/image_raw')
         self.declare_parameter('cmd_vel_topic', '/joy_vel')
         
         # Speed parameters
-        self.declare_parameter('max_linear_speed', 0.1)
-        self.declare_parameter('min_linear_speed', 0.05)
+        self.declare_parameter('max_linear_speed', 0.4)
+        self.declare_parameter('min_linear_speed', 0.15)
         
         # PID gains
-        self.declare_parameter('kp', 0.015)  # Proportional gain
+        self.declare_parameter('kp', 0.03)  # Proportional gain
         self.declare_parameter('ki', 0.0001)  # Integral gain
-        self.declare_parameter('kd', 0.00001)  # Derivative gain
+        self.declare_parameter('kd', 0.016)  # Derivative gain
         
         # ROI parameters
-        self.declare_parameter('roi_y_start', 300)
-        self.declare_parameter('roi_y_end', 480)
-        self.declare_parameter('roi_x_start', 120)
-        self.declare_parameter('roi_x_end', 520)
+        self.declare_parameter('roi_y_start', 150)
+        self.declare_parameter('roi_y_end', 240)
+        self.declare_parameter('roi_x_start', 60)
+        self.declare_parameter('roi_x_end', 260)
         
         # Multi-point detection rows (percentage of ROI height from top)
         # Near = close to robot, Far = looking ahead
@@ -155,6 +155,10 @@ class LinefollowerCvNode(Node):
         # Extract Region of Interest
         roi = frame[self.roi_y_start:self.roi_y_end, 
                     self.roi_x_start:self.roi_x_end]
+        
+        if roi.size == 0:
+            self.get_logger().warn('Empty ROI! Check camera resolution and parameters.')
+            return
         
         # Apply Canny edge detection
         edged = cv2.Canny(roi, self.canny_low, self.canny_high)

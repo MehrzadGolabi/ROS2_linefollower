@@ -1,9 +1,0 @@
-source;share/linefollower_cv/hook/pythonpath.ps1
-source;share/linefollower_cv/hook/pythonpath.dsv
-source;share/linefollower_cv/hook/pythonpath.sh
-source;share/linefollower_cv/hook/ament_prefix_path.ps1
-source;share/linefollower_cv/hook/ament_prefix_path.dsv
-source;share/linefollower_cv/hook/ament_prefix_path.sh
-source;../../build/linefollower_cv/share/linefollower_cv/hook/pythonpath_develop.ps1
-source;../../build/linefollower_cv/share/linefollower_cv/hook/pythonpath_develop.dsv
-source;../../build/linefollower_cv/share/linefollower_cv/hook/pythonpath_develop.sh

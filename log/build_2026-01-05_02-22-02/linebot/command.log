@@ -1,3 +1,0 @@
-Invoking command in '/home/mg/linebot_ws/build/linebot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/mg/linebot_ws/src/linebot -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/mg/linebot_ws/install/linebot
-Invoked command in '/home/mg/linebot_ws/build/linebot' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/mg/linebot_ws/src/linebot -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/mg/linebot_ws/install/linebot
-Invoking command in '/home/mg/linebot_ws/build/linebot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/mg/linebot_ws/build/linebot -- -j16 -l16

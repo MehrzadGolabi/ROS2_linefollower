@@ -1,1 +1,0 @@
-/home/mg/linebot_ws/build/linebot/ament_cmake_environment_hooks/local_setup.bash

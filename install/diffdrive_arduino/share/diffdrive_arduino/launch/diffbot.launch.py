@@ -1,1 +1,0 @@
-/home/mg/linebot_ws/src/diffdrive_arduino/bringup/launch/diffbot.launch.py

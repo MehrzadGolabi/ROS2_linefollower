@@ -1,2 +1,0 @@
-Invoking command in '/home/mg/linebot_ws/build/camera_ros': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/mg/linebot_ws/src/camera_ros -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/mg/linebot_ws/install/camera_ros
-Invoked command in '/home/mg/linebot_ws/build/camera_ros' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/mg/linebot_ws/src/camera_ros -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/mg/linebot_ws/install/camera_ros

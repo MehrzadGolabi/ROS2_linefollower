@@ -1,2 +1,0 @@
-[console_scripts]
-linefollower_cv_node = linefollower_cv.linefollower_cv_node:main

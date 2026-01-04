@@ -1,1 +1,0 @@
-/home/mg/linebot_ws/src/linefollower_cv/launch/linefollower_cv_launch.py

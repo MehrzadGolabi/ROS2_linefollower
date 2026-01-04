@@ -1,1 +1,0 @@
-/home/mg/linebot_ws/src/serial/include/serial/serial.h

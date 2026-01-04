@@ -1,4 +1,0 @@
-Invoking command in '/home/mg/linebot_ws/build/serial': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/mg/linebot_ws/build/serial -- -j16 -l16
-Invoked command in '/home/mg/linebot_ws/build/serial' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/mg/linebot_ws/build/serial -- -j16 -l16
-Invoking command in '/home/mg/linebot_ws/build/serial': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/mg/linebot_ws/build/serial
-Invoked command in '/home/mg/linebot_ws/build/serial' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/mg/linebot_ws/build/serial

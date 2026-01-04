@@ -1,1 +1,0 @@
-/home/mg/linebot_ws/src/linebot/launch/sim_control_station.launch.py

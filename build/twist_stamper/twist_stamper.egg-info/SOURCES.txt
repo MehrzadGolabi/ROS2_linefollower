@@ -1,0 +1,14 @@
+package.xml
+setup.cfg
+setup.py
+resource/twist_stamper
+twist_stamper/__init__.py
+twist_stamper/twist_stamper.py
+twist_stamper/twist_unstamper.py
+twist_stamper.egg-info/PKG-INFO
+twist_stamper.egg-info/SOURCES.txt
+twist_stamper.egg-info/dependency_links.txt
+twist_stamper.egg-info/entry_points.txt
+twist_stamper.egg-info/requires.txt
+twist_stamper.egg-info/top_level.txt
+twist_stamper.egg-info/zip-safe

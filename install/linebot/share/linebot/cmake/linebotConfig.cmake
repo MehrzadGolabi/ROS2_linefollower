@@ -1,0 +1,1 @@
+/home/mg/linebot_ws/build/linebot/ament_cmake_core/linebotConfig.cmake

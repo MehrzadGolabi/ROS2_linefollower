@@ -1,0 +1,26 @@
+running develop
+running egg_info
+creating linefollower_cv.egg-info
+writing linefollower_cv.egg-info/PKG-INFO
+writing dependency_links to linefollower_cv.egg-info/dependency_links.txt
+writing entry points to linefollower_cv.egg-info/entry_points.txt
+writing requirements to linefollower_cv.egg-info/requires.txt
+writing top-level names to linefollower_cv.egg-info/top_level.txt
+writing manifest file 'linefollower_cv.egg-info/SOURCES.txt'
+reading manifest file 'linefollower_cv.egg-info/SOURCES.txt'
+writing manifest file 'linefollower_cv.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/mg/linebot_ws/install/linefollower_cv/lib/python3.12/site-packages/linefollower-cv.egg-link (link to .)
+Installing linefollower_cv_node script to /home/mg/linebot_ws/install/linefollower_cv/lib/linefollower_cv
+
+Installed /home/mg/linebot_ws/build/linefollower_cv
+running symlink_data
+creating /home/mg/linebot_ws/install/linefollower_cv/share/ament_index
+creating /home/mg/linebot_ws/install/linefollower_cv/share/ament_index/resource_index
+creating /home/mg/linebot_ws/install/linefollower_cv/share/ament_index/resource_index/packages
+symbolically linking /home/mg/linebot_ws/build/linefollower_cv/resource/linefollower_cv -> /home/mg/linebot_ws/install/linefollower_cv/share/ament_index/resource_index/packages
+symbolically linking /home/mg/linebot_ws/build/linefollower_cv/package.xml -> /home/mg/linebot_ws/install/linefollower_cv/share/linefollower_cv
+creating /home/mg/linebot_ws/install/linefollower_cv/share/linefollower_cv/config
+symbolically linking /home/mg/linebot_ws/build/linefollower_cv/config/linefollower_cv_params.yaml -> /home/mg/linebot_ws/install/linefollower_cv/share/linefollower_cv/config
+creating /home/mg/linebot_ws/install/linefollower_cv/share/linefollower_cv/launch
+symbolically linking /home/mg/linebot_ws/build/linefollower_cv/launch/linefollower_cv_launch.py -> /home/mg/linebot_ws/install/linefollower_cv/share/linefollower_cv/launch

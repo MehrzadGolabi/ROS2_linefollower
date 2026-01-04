@@ -1,0 +1,77 @@
+-- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found rclcpp: 28.1.13 (/opt/ros/jazzy/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.3.2 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found rclcpp_components: 28.1.13 (/opt/ros/jazzy/share/rclcpp_components/cmake)
+-- Found sensor_msgs: 5.3.6 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+-- Found camera_info_manager: 5.1.7 (/opt/ros/jazzy/share/camera_info_manager/cmake)
+-- Setting yaml-cpp_DIR to: '/opt/ros/jazzy/share/yaml_cpp_vendor/cmake/../../../opt/yaml_cpp_vendor/share/cmake/yaml-cpp'
+-- Found cv_bridge: 4.1.0 (/opt/ros/jazzy/share/cv_bridge/cmake)
+-- Checking for module 'libcamera>=0.1'
+--   Found libcamera, version 0.5.2
+-- Found ament_lint_auto: 0.17.3 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+-- Added test 'clang_format' to check C / C++ code style
+-- Added test 'cppcheck' to perform static code analysis on C / C++ code
+-- Configured cppcheck include dirs: 
+-- Configured cppcheck exclude dirs and/or files: 
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Configured 'flake8' exclude dirs and/or files: 
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'mypy' to statically type check Python code.
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'pyflakes' to perform static code analysis on Python code
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done (6.8s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/mg/linebot_ws/build/camera_ros
+[ 46%] [32mBuilding CXX object CMakeFiles/utils.dir/src/format_mapping.cpp.o[0m
+[ 46%] [32mBuilding CXX object CMakeFiles/param.dir/src/clamp.cpp.o[0m
+[ 46%] [32mBuilding CXX object CMakeFiles/param.dir/src/pv_to_cv.cpp.o[0m
+[ 46%] [32mBuilding CXX object CMakeFiles/camera_node.dir/rclcpp_components/node_main_camera_node.cpp.o[0m
+[ 46%] [32mBuilding CXX object CMakeFiles/param.dir/src/cv_to_pv.cpp.o[0m
+[ 46%] [32mBuilding CXX object CMakeFiles/utils.dir/src/pretty_print.cpp.o[0m
+[ 61%] [32mBuilding CXX object CMakeFiles/param.dir/src/type_extent.cpp.o[0m
+[ 69%] [32mBuilding CXX object CMakeFiles/param.dir/src/ParameterHandler.cpp.o[0m
+[ 69%] [32mBuilding CXX object CMakeFiles/param.dir/src/types.cpp.o[0m
+[ 76%] [32mBuilding CXX object CMakeFiles/param.dir/src/ParameterConflictHandler.cpp.o[0m
+[ 76%] Built target utils
+[ 76%] Built target param
+[ 84%] [32mBuilding CXX object CMakeFiles/camera_component.dir/src/CameraNode.cpp.o[0m
+[ 92%] [32m[1mLinking CXX executable camera_node[0m
+[ 92%] Built target camera_node
+[100%] [32m[1mLinking CXX shared library libcamera_component.so[0m
+[100%] Built target camera_component
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/lib/camera_ros/camera_node
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/environment/library_path.sh
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/environment/library_path.dsv
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros//launch/camera.launch.py
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/ament_index/resource_index/package_run_dependencies/camera_ros
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/ament_index/resource_index/parent_prefix_path/camera_ros
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/environment/ament_prefix_path.sh
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/environment/ament_prefix_path.dsv
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/environment/path.sh
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/environment/path.dsv
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/local_setup.bash
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/local_setup.sh
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/local_setup.zsh
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/local_setup.dsv
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/package.dsv
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/ament_index/resource_index/packages/camera_ros
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/ament_index/resource_index/rclcpp_components/camera_ros
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/ament_cmake_export_targets-extras.cmake
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/ament_cmake_export_dependencies-extras.cmake
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/camera_rosConfig.cmake
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/camera_rosConfig-version.cmake
+-- Symlinking: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/package.xml
+-- Installing: /home/mg/linebot_ws/install/camera_ros/lib/libcamera_component.so
+-- Set non-toolchain portion of runtime path of "/home/mg/linebot_ws/install/camera_ros/lib/libcamera_component.so" to ""
+-- Installing: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/camera_componentTargetsExport.cmake
+-- Installing: /home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/camera_componentTargetsExport-noconfig.cmake

@@ -1,0 +1,17 @@
+[1.874s] Invoking command in '/home/mg/linebot_ws/build/linefollower_cv': PYTHONPATH=/home/mg/linebot_ws/build/linefollower_cv/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/mg/linebot_ws/install/linefollower_cv/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/mg/linebot_ws/build/linefollower_cv/build --no-deps symlink_data
+[2.381s] running develop
+[2.716s] running egg_info
+[2.746s] writing linefollower_cv.egg-info/PKG-INFO
+[2.747s] writing dependency_links to linefollower_cv.egg-info/dependency_links.txt
+[2.747s] writing entry points to linefollower_cv.egg-info/entry_points.txt
+[2.748s] writing requirements to linefollower_cv.egg-info/requires.txt
+[2.748s] writing top-level names to linefollower_cv.egg-info/top_level.txt
+[2.806s] reading manifest file 'linefollower_cv.egg-info/SOURCES.txt'
+[2.807s] writing manifest file 'linefollower_cv.egg-info/SOURCES.txt'
+[2.839s] running build_ext
+[2.839s] Creating /home/mg/linebot_ws/install/linefollower_cv/lib/python3.12/site-packages/linefollower-cv.egg-link (link to .)
+[2.840s] Installing linefollower_cv_node script to /home/mg/linebot_ws/install/linefollower_cv/lib/linefollower_cv
+[2.840s] 
+[2.841s] Installed /home/mg/linebot_ws/build/linefollower_cv
+[2.841s] running symlink_data
+[2.907s] Invoked command in '/home/mg/linebot_ws/build/linefollower_cv' returned '0': PYTHONPATH=/home/mg/linebot_ws/build/linefollower_cv/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/mg/linebot_ws/install/linefollower_cv/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/mg/linebot_ws/build/linefollower_cv/build --no-deps symlink_data

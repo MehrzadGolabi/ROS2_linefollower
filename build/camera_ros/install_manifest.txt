@@ -1,0 +1,3 @@
+/home/mg/linebot_ws/install/camera_ros/lib/libcamera_component.so
+/home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/camera_componentTargetsExport.cmake
+/home/mg/linebot_ws/install/camera_ros/share/camera_ros/cmake/camera_componentTargetsExport-noconfig.cmake

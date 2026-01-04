@@ -1,0 +1,1 @@
+/home/mg/linebot_ws/build/serial/ament_cmake_core/serialConfig-version.cmake

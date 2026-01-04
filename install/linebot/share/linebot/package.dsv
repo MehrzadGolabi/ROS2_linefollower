@@ -1,0 +1,8 @@
+source;share/linebot/hook/cmake_prefix_path.ps1
+source;share/linebot/hook/cmake_prefix_path.dsv
+source;share/linebot/hook/cmake_prefix_path.sh
+source;share/linebot/local_setup.bash
+source;share/linebot/local_setup.dsv
+source;share/linebot/local_setup.ps1
+source;share/linebot/local_setup.sh
+source;share/linebot/local_setup.zsh

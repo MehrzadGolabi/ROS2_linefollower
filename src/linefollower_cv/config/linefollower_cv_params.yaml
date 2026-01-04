@@ -1,0 +1,43 @@
+linefollower_cv_node:
+  ros__parameters:
+    # Topic configuration
+    camera_topic: "/camera/depth/image_raw/image"
+    cmd_vel_topic: "/joy_vel"
+    
+    # Speed parameters (dynamic speed control)
+    max_linear_speed: 0.4    # Max speed on straight sections
+    min_linear_speed: 0.15   # Min speed during sharp curves
+    
+    # PID gains for steering control
+    kp: 0.015    # Proportional gain - main steering response
+    ki: 0.0001   # Integral gain - corrects steady-state error
+    kd: 0.008    # Derivative gain - dampens oscillation, anticipates changes
+    
+    # Region of Interest (ROI) - crop area from image
+    roi_y_start: 300
+    roi_y_end: 480
+    roi_x_start: 120
+    roi_x_end: 520
+    
+    # Multi-point detection rows (percentage of ROI height from top)
+    # Near = close to robot (react now)
+    # Mid = middle distance (current path)
+    # Far = lookahead (anticipate curves)
+    detection_row_near: 0.85
+    detection_row_mid: 0.60
+    detection_row_far: 0.35
+    
+    # Weights for multi-point detection (should sum to ~1.0)
+    weight_near: 0.5    # Highest priority - immediate correction
+    weight_mid: 0.3     # Medium priority - path following
+    weight_far: 0.2     # Lower priority - curve anticipation
+    
+    # Canny edge detection thresholds
+    canny_threshold_low: 50
+    canny_threshold_high: 150
+    
+    # Debug visualization
+    show_debug_windows: true
+    
+    # Use simulation time
+    use_sim_time: true

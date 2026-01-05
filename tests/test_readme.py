@@ -10,6 +10,9 @@ class TestREADME(unittest.TestCase):
             content = f.read()
             self.assertIn('# ROS 2 Line-Follower Robot', content)
             self.assertIn('## 🚀 Quick Start / Cheat Sheet', content)
+            self.assertIn('### 🤖 linebot (Core Bringup)', content)
+            self.assertIn('### 👁️ linefollower_cv (Computer Vision)', content)
+            self.assertIn('### 📡 linefollower_ir (IR Sensors)', content)
 
 if __name__ == '__main__':
     unittest.main()

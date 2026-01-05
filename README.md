@@ -15,3 +15,51 @@ This repository contains the source code and configuration for a high-performanc
 | **Visualize System (RViz)** | `rviz2` |
 
 ---
+
+## 📦 Workspace Packages
+
+### 🤖 linebot (Core Bringup)
+The primary package for system orchestration and hardware/simulation bringup.
+
+#### 🏁 Robot Bringup
+Starts the physical robot, including motor drivers, encoders, and selected sensors.
+- **Command:** `ros2 launch linebot robot.launch.py`
+- **Arguments:**
+  | Argument | Default | Description |
+  | --- | --- | --- |
+  | `mode` | `camera` | Sensor mode: `camera`, `ir`, or `hybrid` |
+  | `use_ros2_control` | `true` | Use ros2_control framework |
+  | `rviz` | `false` | Launch RViz for debugging |
+- **Key Nodes:** `ros2_control_node`, `robot_state_publisher`, `twist_mux`, `twist_stamper`
+
+#### 🎮 Simulation
+Launches the robot in the Gazebo Sim environment.
+- **Command:** `ros2 launch linebot sim.launch.py`
+- **Arguments:**
+  | Argument | Default | Description |
+  | --- | --- | --- |
+  | `world` | `linefollow.sdf` | SDF world file to load |
+  | `use_sim_time` | `true` | Sync with simulator clock |
+- **Key Nodes:** `gz_sim`, `ros_gz_bridge`, `robot_state_publisher`
+
+---
+
+### 👁️ linefollower_cv (Computer Vision)
+Handles high-speed line detection and navigation using OpenCV.
+
+#### 🚀 Launch CV Node
+- **Command:** `ros2 launch linefollower_cv linefollower_cv_launch.py`
+- **Arguments:**
+  | Argument | Default | Description |
+  | --- | --- | --- |
+  | `camera_topic` | `/camera/image_raw` | Topic to subscribe for images |
+- **Key Nodes:** `linefollower_cv_node`
+
+---
+
+### 📡 linefollower_ir (IR Sensors)
+State-machine based line following using the 5-array IR sensor.
+
+#### 🚀 Launch IR Node
+- **Command:** `ros2 launch linefollower_ir linefollower_ir_launch.py`
+- **Key Nodes:** `linefollower_ir_node`

@@ -33,6 +33,7 @@ class TestKeyMapping(unittest.TestCase):
             'S': (-0.5, 0.0),
             'A': (0.0, 1.0),
             'D': (0.0, -1.0),
+            ' ': (0.0, 0.0),  # Safety stop
             'x': (0.0, 0.0),  # Unknown key
             '': (0.0, 0.0)    # No key pressed
         }

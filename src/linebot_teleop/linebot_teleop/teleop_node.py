@@ -28,6 +28,10 @@ class TeleopNode(Node):
             twist.angular.z = self.turn
         elif key == 'd':
             twist.angular.z = -self.turn
+        elif key == ' ':
+            # Safety stop: already zeroed, but made explicit
+            twist.linear.x = 0.0
+            twist.angular.z = 0.0
         return twist
 
     def getKey(self):

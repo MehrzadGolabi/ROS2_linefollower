@@ -12,7 +12,7 @@ This repository contains the source code and configuration for a high-performanc
 ### Build the Workspace
 ```bash
 # Clone the repository (if not already done)
-git clone <repository_url> linebot_ws
+git clone https://github.com/MehrzadGolabi/ROS2_linefollower.git
 cd linebot_ws
 
 # Install dependencies

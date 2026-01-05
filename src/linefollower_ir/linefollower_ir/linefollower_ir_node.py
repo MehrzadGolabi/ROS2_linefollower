@@ -59,29 +59,8 @@ class LinefollowerIrNode(Node):
             twist.twist.angular.z = -self.angular_speed
             
         elif ir_str == "11111":
-            # All background (Line Lost or Gap)
-            # Stop for safety or search? Arduino code says "Hard Right".
-            # Wait, Arduino code says:
-            # else if (infraRed == "11111") {
-            #   // Hard Right
-            #   driveMotorA(SPEED_TURN);
-            #   driveMotorB(SPEED_TURN); 
-            # }
-            # Wait, driveMotorA(SPEED) and B(SPEED) means GO STRAIGHT?
-            # Or is it a rotate?
-            # driveMotorA is Left Motor. driveMotorB is Right Motor.
-            # If both are positive SPEED_TURN, it goes straight.
-            # But "Hard Right" comment is there.
-            
-            # Let's check "Hard Right" logic earlier:
-            # driveMotorA(SPEED_TURN); driveMotorB(-SPEED_TURN); -> Rotate Right.
-            
-            # For "11111": driveMotorA(SPEED_TURN); driveMotorB(SPEED_TURN);
-            # This looks like "Go Straight". Maybe it assumes if lost, keep going?
-            
-            # I will act conservative: Stop.
-            twist.twist.linear.x = 0.0
-            twist.twist.angular.z = 0.0
+            twist.twist.linear.x = 0.2
+            twist.twist.angular.z = 0.2
             
         else:
             # Default stop

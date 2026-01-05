@@ -17,6 +17,10 @@ class TestREADME(unittest.TestCase):
             self.assertIn('### ⌨️ teleop_twist_keyboard', content)
             self.assertIn('### 🖼️ rqt_image_view', content)
             self.assertIn('### 📊 RViz2', content)
+            self.assertIn('## 📖 Scenario-Based Tutorials', content)
+            self.assertIn('### 1. Running in IR Line-Following Mode', content)
+            self.assertIn('### 2. Running in Computer Vision Mode', content)
+            self.assertIn('### 3. Running in Simulation', content)
 
 if __name__ == '__main__':
     unittest.main()

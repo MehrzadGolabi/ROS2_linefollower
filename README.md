@@ -82,3 +82,45 @@ A GUI tool to view camera streams and processed images.
 The primary visualization tool for ROS 2.
 - **Command:** `rviz2`
 - **Usage:** Used to monitor robot state, sensor data (Lidar, Odometry), and coordinate frames.
+
+---
+
+## 📖 Scenario-Based Tutorials
+
+### 1. Running in IR Line-Following Mode
+Use this mode for high-reliability line following using the infrared sensor array.
+1.  **Bringup the robot in IR mode:**
+    ```bash
+    ros2 launch linebot robot.launch.py mode:=ir
+    ```
+2.  **Start the IR line-follower logic:**
+    ```bash
+    ros2 launch linefollower_ir linefollower_ir_launch.py
+    ```
+
+### 2. Running in Computer Vision Mode
+Use this mode for advanced navigation using the camera.
+1.  **Bringup the robot in camera mode:**
+    ```bash
+    ros2 launch linebot robot.launch.py mode:=camera
+    ```
+2.  **Start the CV line-follower logic:**
+    ```bash
+    ros2 launch linefollower_cv linefollower_cv_launch.py
+    ```
+3.  **Optional: View processed image:**
+    ```bash
+    ros2 run rqt_image_view rqt_image_view
+    ```
+    (Select `/line_image` to see the detection result)
+
+### 3. Running in Simulation
+Test your algorithms in a virtual environment.
+1.  **Launch the simulator:**
+    ```bash
+    ros2 launch linebot sim.launch.py
+    ```
+2.  **Optional: Control manually to test bridges:**
+    ```bash
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard
+    ```

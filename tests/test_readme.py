@@ -13,6 +13,10 @@ class TestREADME(unittest.TestCase):
             self.assertIn('### 🤖 linebot (Core Bringup)', content)
             self.assertIn('### 👁️ linefollower_cv (Computer Vision)', content)
             self.assertIn('### 📡 linefollower_ir (IR Sensors)', content)
+            self.assertIn('## 🛠️ External ROS 2 Tools', content)
+            self.assertIn('### ⌨️ teleop_twist_keyboard', content)
+            self.assertIn('### 🖼️ rqt_image_view', content)
+            self.assertIn('### 📊 RViz2', content)
 
 if __name__ == '__main__':
     unittest.main()

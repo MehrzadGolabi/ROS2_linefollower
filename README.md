@@ -28,6 +28,7 @@ Starts the physical robot, including motor drivers, encoders, and selected senso
   | Argument | Default | Description |
   | --- | --- | --- |
   | `mode` | `camera` | Sensor mode: `camera`, `ir`, or `hybrid` |
+  | `camera_topic` | `/camera/image_raw` | Topic to subscribe for images |
   | `use_ros2_control` | `true` | Use ros2_control framework |
   | `rviz` | `false` | Launch RViz for debugging |
 - **Key Nodes:** `ros2_control_node`, `robot_state_publisher`, `twist_mux`, `twist_stamper`

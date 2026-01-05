@@ -55,6 +55,7 @@ struct Config
   int pid_d = 0;
   int pid_i = 0;
   int pid_o = 0;
+  bool enable_ir = false;
 };
 
 

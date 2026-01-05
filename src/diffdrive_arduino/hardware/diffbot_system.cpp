@@ -55,8 +55,16 @@ hardware_interface::CallbackReturn DiffDriveArduinoHardware::on_init(
     RCLCPP_INFO(rclcpp::get_logger("DiffDriveArduinoHardware"), "PID values not supplied, using defaults.");
   }
   
-  node_ = std::make_shared<rclcpp::Node>("diffdrive_arduino_ir_publisher");
-  ir_pub_ = node_->create_publisher<std_msgs::msg::String>("/ir_sensors", 10);
+  if (info_.hardware_parameters.count("enable_ir") > 0)
+  {
+    cfg_.enable_ir = (info_.hardware_parameters.at("enable_ir") == "true");
+  }
+
+  if (cfg_.enable_ir)
+  {
+    node_ = std::make_shared<rclcpp::Node>("diffdrive_arduino_ir_publisher");
+    ir_pub_ = node_->create_publisher<std_msgs::msg::String>("/ir_sensors", 10);
+  }
 
   wheel_l_.setup(cfg_.left_wheel_name, cfg_.enc_counts_per_rev);
   wheel_r_.setup(cfg_.right_wheel_name, cfg_.enc_counts_per_rev);
@@ -206,12 +214,15 @@ hardware_interface::return_type DiffDriveArduinoHardware::read(
     return hardware_interface::return_type::ERROR;
   }
 
-  std::string ir_val = comms_.read_ir_sensors();
-  if (!ir_val.empty())
+  if (cfg_.enable_ir)
   {
-    std_msgs::msg::String msg;
-    msg.data = ir_val;
-    ir_pub_->publish(msg);
+    std::string ir_val = comms_.read_ir_sensors();
+    if (!ir_val.empty())
+    {
+      std_msgs::msg::String msg;
+      msg.data = ir_val;
+      ir_pub_->publish(msg);
+    }
   }
 
   comms_.read_encoder_values(wheel_l_.enc, wheel_r_.enc);

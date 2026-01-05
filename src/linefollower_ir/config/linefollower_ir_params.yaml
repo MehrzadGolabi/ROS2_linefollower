@@ -1,4 +1,6 @@
 linefollower_ir_node:
   ros__parameters:
-    example_param: "abc"
-
+    linear_speed: 0.2
+    angular_speed: 1.0
+    # recovery_speed is not yet used in logic but good to have
+    recovery_speed: 0.5

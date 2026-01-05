@@ -29,6 +29,11 @@ class TestKeyMapping(unittest.TestCase):
             's': (-0.5, 0.0),
             'a': (0.0, 1.0),
             'd': (0.0, -1.0),
+            'W': (0.5, 0.0),  # Case insensitive
+            'S': (-0.5, 0.0),
+            'A': (0.0, 1.0),
+            'D': (0.0, -1.0),
+            'x': (0.0, 0.0),  # Unknown key
             '': (0.0, 0.0)    # No key pressed
         }
 
@@ -36,6 +41,30 @@ class TestKeyMapping(unittest.TestCase):
             twist = self.node.get_twist_from_key(key)
             self.assertEqual(twist.linear.x, expected[0], f"Failed for key '{key}' linear.x")
             self.assertEqual(twist.angular.z, expected[1], f"Failed for key '{key}' angular.z")
+
+    def test_get_key(self):
+        from unittest.mock import patch, MagicMock
+        import sys
+        
+        # Mock termios, tty, select and sys.stdin
+        with patch('linebot_teleop.teleop_node.termios') as mock_termios, \
+             patch('linebot_teleop.teleop_node.tty') as mock_tty, \
+             patch('linebot_teleop.teleop_node.select.select') as mock_select, \
+             patch('linebot_teleop.teleop_node.sys.stdin') as mock_stdin:
+            
+            mock_stdin.fileno.return_value = 0
+            
+            # Simulate key press 'w'
+            mock_select.return_value = ([mock_stdin], [], [])
+            mock_stdin.read.return_value = 'w'
+            
+            key = self.node.getKey()
+            self.assertEqual(key, 'w')
+            
+            # Simulate no key press
+            mock_select.return_value = ([], [], [])
+            key = self.node.getKey()
+            self.assertEqual(key, '')
 
 
 if __name__ == '__main__':

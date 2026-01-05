@@ -19,6 +19,7 @@ class TeleopNode(Node):
 
     def get_twist_from_key(self, key):
         twist = Twist()
+        key = key.lower()
         if key == 'w':
             twist.linear.x = self.speed
         elif key == 's':

@@ -2,6 +2,30 @@
 
 This repository contains the source code and configuration for a high-performance ROS 2 (Jazzy) line-follower robot. It supports both IR-based and Computer Vision-based line following.
 
+## 🛠️ Installation & Building
+
+### Prerequisites
+- ROS 2 Jazzy Jalisco
+- Gazebo Sim (for simulation)
+- OpenCV (for CV mode)
+
+### Build the Workspace
+```bash
+# Clone the repository (if not already done)
+git clone <repository_url> linebot_ws
+cd linebot_ws
+
+# Install dependencies
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+
+# Build
+colcon build --symlink-install
+
+# Source the workspace
+source install/setup.bash
+```
+
 ## 🚀 Quick Start / Cheat Sheet
 
 | Task | Command |

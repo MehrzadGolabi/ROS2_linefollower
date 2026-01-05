@@ -9,6 +9,7 @@ class TestREADME(unittest.TestCase):
         with open('README.md', 'r') as f:
             content = f.read()
             self.assertIn('# ROS 2 Line-Follower Robot', content)
+            self.assertIn('## 🛠️ Installation & Building', content)
             self.assertIn('## 🚀 Quick Start / Cheat Sheet', content)
             self.assertIn('### 🤖 linebot (Core Bringup)', content)
             self.assertIn('### 👁️ linefollower_cv (Computer Vision)', content)

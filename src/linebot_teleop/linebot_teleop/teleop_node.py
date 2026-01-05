@@ -1,17 +1,34 @@
-import rclpy
-from rclpy.node import Node
-from geometry_msgs.msg import Twist
+import select
 import sys
 import termios
 import tty
-import select
+
+from geometry_msgs.msg import Twist
+import rclpy
+from rclpy.node import Node
+
 
 class TeleopNode(Node):
+
     def __init__(self):
         super().__init__('teleop_node')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.speed = 0.5
+        self.turn = 1.0
         self.get_logger().info('Teleop Node Started')
-        
+
+    def get_twist_from_key(self, key):
+        twist = Twist()
+        if key == 'w':
+            twist.linear.x = self.speed
+        elif key == 's':
+            twist.linear.x = -self.speed
+        elif key == 'a':
+            twist.angular.z = self.turn
+        elif key == 'd':
+            twist.angular.z = -self.turn
+        return twist
+
     def getKey(self):
         # Basic non-blocking key read (implementation placeholder)
         settings = termios.tcgetattr(sys.stdin)
@@ -24,6 +41,7 @@ class TeleopNode(Node):
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
         return key
 
+
 def main(args=None):
     rclpy.init(args=args)
     node = TeleopNode()
@@ -34,6 +52,7 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

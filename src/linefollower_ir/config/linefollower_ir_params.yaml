@@ -1,0 +1,4 @@
+linefollower_ir_node:
+  ros__parameters:
+    example_param: "abc"
+

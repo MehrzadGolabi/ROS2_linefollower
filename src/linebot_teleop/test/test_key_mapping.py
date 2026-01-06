@@ -44,24 +44,23 @@ class TestKeyMapping(unittest.TestCase):
             self.assertEqual(twist.angular.z, expected[1], f"Failed for key '{key}' angular.z")
 
     def test_get_key(self):
-        from unittest.mock import patch, MagicMock
-        import sys
-        
+        from unittest.mock import patch
+
         # Mock termios, tty, select and sys.stdin
-        with patch('linebot_teleop.teleop_node.termios') as mock_termios, \
-             patch('linebot_teleop.teleop_node.tty') as mock_tty, \
+        with patch('linebot_teleop.teleop_node.termios'), \
+             patch('linebot_teleop.teleop_node.tty'), \
              patch('linebot_teleop.teleop_node.select.select') as mock_select, \
              patch('linebot_teleop.teleop_node.sys.stdin') as mock_stdin:
-            
+
             mock_stdin.fileno.return_value = 0
-            
+
             # Simulate key press 'w'
             mock_select.return_value = ([mock_stdin], [], [])
             mock_stdin.read.return_value = 'w'
-            
+
             key = self.node.getKey()
             self.assertEqual(key, 'w')
-            
+
             # Simulate no key press
             mock_select.return_value = ([], [], [])
             key = self.node.getKey()

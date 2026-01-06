@@ -11,3 +11,4 @@ install/
 build/
 log/
 conductor/
+*:Zone.Identifier

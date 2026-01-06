@@ -5,3 +5,9 @@ log/
 *.pyc
 .vscode/
 .coverage
+.vscode/
+conductor/
+install/
+build/
+log/
+conductor/

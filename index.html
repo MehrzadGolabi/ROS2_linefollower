@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>linebot</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> linebot
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#installation-building">Installation &amp; Building</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#build-the-workspace">Build the Workspace</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-start-cheat-sheet">Quick Start / Cheat Sheet</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#workspace-packages">Workspace Packages</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linebot-core-bringup">linebot (Core Bringup)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#robot-bringup">Robot Bringup</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#simulation">Simulation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linefollower_cv-computer-vision">linefollower_cv (Computer Vision)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#launch-cv-node">Launch CV Node</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linefollower_ir-ir-sensors">linefollower_ir (IR Sensors)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#launch-ir-node">Launch IR Node</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#external-ros-2-tools">External ROS 2 Tools</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#teleop_twist_keyboard">teleop_twist_keyboard</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rqt_image_view">rqt_image_view</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rviz2">RViz2</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#scenario-based-tutorials">Scenario-Based Tutorials</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-running-in-ir-line-following-mode">1. Running in IR Line-Following Mode</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-running-in-computer-vision-mode">2. Running in Computer Vision Mode</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-running-in-simulation">3. Running in Simulation</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="gallery/">Gallery</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">linebot</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="ros-2-line-follower-robot">ROS 2 Line-Follower Robot</h1>
+<p>This repository contains the source code and configuration for a high-performance ROS 2 (Jazzy) line-follower robot. It supports both IR-based and Computer Vision-based line following.</p>
+<h2 id="installation-building">Installation &amp; Building</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>ROS 2 Jazzy Jalisco</li>
+<li>Gazebo Sim (for simulation)</li>
+<li>OpenCV (for CV mode)</li>
+</ul>
+<h3 id="build-the-workspace">Build the Workspace</h3>
+<pre><code class="language-bash"># Clone the repository (if not already done)
+git clone https://github.com/MehrzadGolabi/ROS2_linefollower.git
+cd linebot_ws
+
+# Install dependencies
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+
+# Build
+colcon build --symlink-install
+
+# Source the workspace
+source install/setup.bash
+</code></pre>
+<h2 id="quick-start-cheat-sheet">Quick Start / Cheat Sheet</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bringup (Physical Robot)</strong></td>
+<td><code>ros2 launch linebot robot.launch.py</code></td>
+</tr>
+<tr>
+<td><strong>Bringup (Simulation)</strong></td>
+<td><code>ros2 launch linebot sim.launch.py</code></td>
+</tr>
+<tr>
+<td><strong>Manual Control (Keyboard)</strong></td>
+<td><code>ros2 run teleop_twist_keyboard teleop_twist_keyboard</code></td>
+</tr>
+<tr>
+<td><strong>View Camera Stream</strong></td>
+<td><code>ros2 run rqt_image_view rqt_image_view</code></td>
+</tr>
+<tr>
+<td><strong>IR Line Following</strong></td>
+<td><code>ros2 launch linefollower_ir linefollower_ir_launch.py</code></td>
+</tr>
+<tr>
+<td><strong>CV Line Following</strong></td>
+<td><code>ros2 launch linefollower_cv linefollower_cv_launch.py</code></td>
+</tr>
+<tr>
+<td><strong>Visualize System (RViz)</strong></td>
+<td><code>rviz2</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="workspace-packages">Workspace Packages</h2>
+<h3 id="linebot-core-bringup">linebot (Core Bringup)</h3>
+<p>The primary package for system orchestration and hardware/simulation bringup.</p>
+<h4 id="robot-bringup">Robot Bringup</h4>
+<p>Starts the physical robot, including motor drivers, encoders, and selected sensors.
+- <strong>Command:</strong> <code>ros2 launch linebot robot.launch.py</code>
+- <strong>Arguments:</strong>
+  | Argument | Default | Description |
+  | --- | --- | --- |
+  | <code>mode</code> | <code>camera</code> | Sensor mode: <code>camera</code>, <code>ir</code>, or <code>hybrid</code> |
+  | <code>camera_topic</code> | <code>/camera/image_raw</code> | Topic to subscribe for images |
+  | <code>use_ros2_control</code> | <code>true</code> | Use ros2_control framework |
+  | <code>rviz</code> | <code>false</code> | Launch RViz for debugging |
+- <strong>Key Nodes:</strong> <code>ros2_control_node</code>, <code>robot_state_publisher</code>, <code>twist_mux</code>, <code>twist_stamper</code></p>
+<h4 id="simulation">Simulation</h4>
+<p>Launches the robot in the Gazebo Sim environment.
+- <strong>Command:</strong> <code>ros2 launch linebot sim.launch.py</code>
+- <strong>Arguments:</strong>
+  | Argument | Default | Description |
+  | --- | --- | --- |
+  | <code>world</code> | <code>linefollow.sdf</code> | SDF world file to load |
+  | <code>use_sim_time</code> | <code>true</code> | Sync with simulator clock |
+- <strong>Key Nodes:</strong> <code>gz_sim</code>, <code>ros_gz_bridge</code>, <code>robot_state_publisher</code></p>
+<hr />
+<h3 id="linefollower_cv-computer-vision">linefollower_cv (Computer Vision)</h3>
+<p>Handles high-speed line detection and navigation using OpenCV.</p>
+<h4 id="launch-cv-node">Launch CV Node</h4>
+<ul>
+<li><strong>Command:</strong> <code>ros2 launch linefollower_cv linefollower_cv_launch.py</code></li>
+<li><strong>Arguments:</strong>
+  | Argument | Default | Description |
+  | --- | --- | --- |
+  | <code>camera_topic</code> | <code>/camera/image_raw</code> | Topic to subscribe for images |</li>
+<li><strong>Key Nodes:</strong> <code>linefollower_cv_node</code></li>
+</ul>
+<hr />
+<h3 id="linefollower_ir-ir-sensors">linefollower_ir (IR Sensors)</h3>
+<p>State-machine based line following using the 5-array IR sensor.</p>
+<h4 id="launch-ir-node">Launch IR Node</h4>
+<ul>
+<li><strong>Command:</strong> <code>ros2 launch linefollower_ir linefollower_ir_launch.py</code></li>
+<li><strong>Key Nodes:</strong> <code>linefollower_ir_node</code></li>
+</ul>
+<hr />
+<h2 id="external-ros-2-tools">External ROS 2 Tools</h2>
+<h3 id="teleop_twist_keyboard">teleop_twist_keyboard</h3>
+<p>Standard tool for manual control of the robot using the keyboard.
+- <strong>Command:</strong> <code>ros2 run teleop_twist_keyboard teleop_twist_keyboard</code>
+- <strong>Usage:</strong> Follow the on-screen instructions to use keys like <code>i</code>, <code>j</code>, <code>l</code>, <code>k</code> for movement.</p>
+<h3 id="rqt_image_view">rqt_image_view</h3>
+<p>A GUI tool to view camera streams and processed images.
+- <strong>Command:</strong> <code>ros2 run rqt_image_view rqt_image_view</code>
+- <strong>Usage:</strong> Select the desired image topic (e.g., <code>/camera/image_raw</code> or <code>/line_image</code>) from the dropdown menu.</p>
+<h3 id="rviz2">RViz2</h3>
+<p>The primary visualization tool for ROS 2.
+- <strong>Command:</strong> <code>rviz2</code>
+- <strong>Usage:</strong> Used to monitor robot state, sensor data (Lidar, Odometry), and coordinate frames.</p>
+<hr />
+<h2 id="scenario-based-tutorials">Scenario-Based Tutorials</h2>
+<h3 id="1-running-in-ir-line-following-mode">1. Running in IR Line-Following Mode</h3>
+<p>Use this mode for high-reliability line following using the infrared sensor array.
+1.  <strong>Bringup the robot in IR mode:</strong>
+    <code>bash
+    ros2 launch linebot robot.launch.py mode:=ir</code>
+2.  <strong>Start the IR line-follower logic:</strong>
+    <code>bash
+    ros2 launch linefollower_ir linefollower_ir_launch.py</code></p>
+<h3 id="2-running-in-computer-vision-mode">2. Running in Computer Vision Mode</h3>
+<p>Use this mode for advanced navigation using the camera.
+1.  <strong>Bringup the robot in camera mode:</strong>
+    <code>bash
+    ros2 launch linebot robot.launch.py mode:=camera</code>
+2.  <strong>Start the CV line-follower logic:</strong>
+    <code>bash
+    ros2 launch linefollower_cv linefollower_cv_launch.py</code>
+3.  <strong>Optional: View processed image:</strong>
+    <code>bash
+    ros2 run rqt_image_view rqt_image_view</code>
+    (Select <code>/line_image</code> to see the detection result)</p>
+<h3 id="3-running-in-simulation">3. Running in Simulation</h3>
+<p>Test your algorithms in a virtual environment.
+1.  <strong>Launch the simulator:</strong>
+    <code>bash
+    ros2 launch linebot sim.launch.py</code>
+2.  <strong>Optional: Control manually to test bridges:</strong>
+    <code>bash
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard</code></p>
+<pre><code class="language-bash">ros2 launch linefollower_cv linefollower_cv_launch.py use_sim_time:=true camera_topic:=/camera/depth/image_raw/image
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="gallery/" class="btn btn-neutral float-right" title="Gallery">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="gallery/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-01-07 15:59:48.954242+00:00
+-->

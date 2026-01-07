@@ -89,6 +89,7 @@ class LinefollowerCvNode(Node):
         
         # Velocity message (TwistStamped for twist_mux compatibility)
         self.vel_msg = TwistStamped()
+        self.vel_msg.header.frame_id = 'base_link'
         
         # PID state
         self.prev_error = 0.0

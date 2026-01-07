@@ -181,6 +181,8 @@ def generate_launch_description():
         arguments=['-topic', 'robot_description', 
                 '-name', 'linebot',
                 '-allow_renaming', 'true',
+                '-x', '-1.10',
+                '-y', '-1.50',
                 '-z', '0.1'],
     )
 

@@ -14,10 +14,11 @@ linefollower_cv_node:
     kd: 0.016    # Derivative gain - dampens oscillation, anticipates changes
     
     # Region of Interest (ROI) - crop area from image
-    roi_y_start: 150
-    roi_y_end: 240
-    roi_x_start: 60
-    roi_x_end: 260
+    # Expanded ROI for better path visibility (640x480 camera resolution)
+    roi_y_start: 100      # Less top crop - see further ahead
+    roi_y_end: 400        # More bottom crop - see more of path
+    roi_x_start: 20       # Less left crop - see wider path
+    roi_x_end: 620        # Less right crop - see wider path
     
     # Multi-point detection rows (percentage of ROI height from top)
     # Near = close to robot (react now)

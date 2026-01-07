@@ -149,3 +149,8 @@ Test your algorithms in a virtual environment.
     ```bash
     ros2 run teleop_twist_keyboard teleop_twist_keyboard
     ```
+
+
+```bash
+ros2 launch linefollower_cv linefollower_cv_launch.py use_sim_time:=true camera_topic:=/camera/depth/image_raw/image
+```

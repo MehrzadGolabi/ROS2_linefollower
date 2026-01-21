@@ -31,8 +31,8 @@
 
   // Motor A (Left)
   #define PWMA 13 // Speed control (PWM)
-  #define AIN1 12 // Direction
-  #define AIN2 14 // Direction
+  #define AIN1 14 // Direction
+  #define AIN2 12 // Direction
 
   // Motor B (Right)
   #define PWMB 25 // Speed control (PWM)

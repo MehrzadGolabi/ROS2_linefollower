@@ -198,7 +198,8 @@
   }
 
   long readEncoder(int i) {
-     return updateEncoderState(i);
+     if (i == LEFT) return updateEncoderState(i);
+     else return -updateEncoderState(i);  // Invert right encoder
   }
 
   void resetEncoder(int i) {

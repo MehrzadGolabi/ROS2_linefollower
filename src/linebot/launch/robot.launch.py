@@ -52,8 +52,8 @@ def generate_launch_description():
 
     declare_mode = DeclareLaunchArgument(
         'mode',
-        default_value='camera',
-        description='Sensor mode: camera, ir, or hybrid'
+        default_value='teleop',
+        description='Sensor mode: camera, ir, hybrid, or teleop'
     )
 
     declare_rviz = DeclareLaunchArgument(
@@ -214,7 +214,11 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(linefollower_cv_pkg, 'launch', 'linefollower_cv_launch.py')
         ),
-        condition=camera_condition
+        condition=camera_condition,
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+            'camera_topic': '/camera/image_raw'
+        }.items()
     )
 
     linefollower_ir_pkg = get_package_share_directory('linefollower_ir')

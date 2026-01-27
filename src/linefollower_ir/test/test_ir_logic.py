@@ -48,6 +48,17 @@ class TestIrLogic(unittest.TestCase):
         # Expect positive angular velocity (left turn)
         self.assertGreater(twist.twist.angular.z, 0.1)
 
+    def test_decimal_input(self):
+        msg = String()
+        msg.data = "27" # "11011" in binary
+        self.node.ir_callback(msg)
+        
+        self.node.cmd_vel_pub.publish.assert_called_once()
+        twist = self.node.cmd_vel_pub.publish.call_args[0][0]
+        # Should be interpreted as 11011
+        self.assertGreater(twist.twist.linear.x, 0.0)
+        self.assertAlmostEqual(twist.twist.angular.z, 0.0, delta=0.1)
+
     def test_turn_right(self):
         msg = String()
         msg.data = "11001" 

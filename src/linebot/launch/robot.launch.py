@@ -226,7 +226,8 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(linefollower_ir_pkg, 'launch', 'linefollower_ir_launch.py')
         ),
-        condition=ir_condition
+        condition=ir_condition,
+        launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     # rviz2 node

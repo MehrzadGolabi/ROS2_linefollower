@@ -24,13 +24,28 @@ class LinefollowerIrNode(Node):
         self.get_logger().info("IR Line Follower Node Started")
 
     def ir_callback(self, msg):
-        ir_str = msg.data.strip()
+        ir_data = msg.data.strip()
+        
+        # If the data is a decimal number (0-31 from hardware bridge), convert to 5-bit binary string
+        # Valid decimal values (0-31) will have length < 5. Binary strings have length 5.
+        if ir_data.isdigit() and len(ir_data) < 5:
+            try:
+                val = int(ir_data)
+                ir_str = format(val, '05b')
+            except ValueError:
+                ir_str = ir_data
+        else:
+            ir_str = ir_data
+
         twist = TwistStamped()
         twist.header.stamp = self.get_clock().now().to_msg()
+        twist.header.frame_id = "base_link"
         
         if len(ir_str) < 5:
             return
 
+        self.get_logger().info(f"IR State: {ir_str}")
+        
         # Logic based on '0' = Line, '1' = Background (inferred from Arduino code)
         
         if ir_str == "11011":

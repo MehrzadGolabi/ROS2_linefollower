@@ -1,5 +1,9 @@
 site_name: linebot
 nav:
   - Home: index.md
+  - Packages:
+    - Linebot Bringup: packages/linebot_pkg.md
+    - Computer Vision: packages/linefollower_cv.md
+    - IR Follower: packages/linefollower_ir.md
   - Gallery: gallery.md
 theme: readthedocs

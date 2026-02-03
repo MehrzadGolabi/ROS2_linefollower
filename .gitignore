@@ -13,4 +13,4 @@ log/
 conductor/
 *:Zone.Identifier
 .venv/
-linebot_documentation/
+linebot_documentation/site/

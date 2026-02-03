@@ -1,0 +1,5 @@
+site_name: linebot
+nav:
+  - Home: index.md
+  - Gallery: gallery.md
+theme: readthedocs

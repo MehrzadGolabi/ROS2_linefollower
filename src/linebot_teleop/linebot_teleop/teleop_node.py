@@ -18,6 +18,7 @@ Moving around:
 
 w/s : increase/decrease linear velocity
 a/d : increase/decrease angular velocity
+z   : toggle speed mode (Normal/Fast)
 
 space key : force stop
 
@@ -96,6 +97,12 @@ class TeleopNode(Node):
             self.control_linear_velocity = 0.0
             self.target_angular_velocity = 0.0
             self.control_angular_velocity = 0.0
+
+    def get_status_message(self):
+        mode = 'Fast' if self.speed_multiplier == 2.0 else 'Normal'
+        return (f'Currently: Speed Mode: {mode} | '
+                f'Linear: {self.target_linear_velocity:.2f} | '
+                f'Angular: {self.target_angular_velocity:.2f}')
 
     def constrain(self, input_vel, low_bound, high_bound):
         if input_vel < low_bound:
@@ -177,12 +184,6 @@ class TeleopNode(Node):
             self.publisher_.publish(twist)
 
 
-def print_vels(target_linear_vel, target_angular_vel):
-    print('currently:\tlinear velocity {0}\t angular velocity {1} '.format(
-        target_linear_vel,
-        target_angular_vel))
-
-
 def main(args=None):
     rclpy.init(args=args)
     node = TeleopNode()
@@ -194,7 +195,7 @@ def main(args=None):
             key = node.get_key()
             if key in ['w', 'a', 'd', ' ', 's', 'z']:
                 node.update_target_velocity(key)
-                print_vels(node.target_linear_velocity, node.target_angular_velocity)
+                print(node.get_status_message())
                 status += 1
             elif key == '\x03':  # CTRL-C
                 break

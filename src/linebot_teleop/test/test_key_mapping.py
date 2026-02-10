@@ -95,6 +95,16 @@ class TestKeyMapping(unittest.TestCase):
         self.node.update_target_velocity('z')
         self.assertEqual(self.node.speed_multiplier, 1.0)
 
+    def test_status_message(self):
+        # Initial status should show Normal
+        msg = self.node.get_status_message()
+        self.assertIn('Speed Mode: Normal', msg)
+
+        # Toggle to Fast
+        self.node.update_target_velocity('z')
+        msg = self.node.get_status_message()
+        self.assertIn('Speed Mode: Fast', msg)
+
 
 if __name__ == '__main__':
     unittest.main()

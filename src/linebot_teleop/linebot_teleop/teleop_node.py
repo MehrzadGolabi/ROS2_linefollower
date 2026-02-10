@@ -38,9 +38,9 @@ class TeleopNode(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('stamped', False),
+                ('stamped', True),
                 ('frame_id', 'base_link'),
-                ('topic_name', 'cmd_vel'),
+                ('topic_name', 'joy_vel'),
                 ('max_linear_vel', 0.22),
                 ('max_angular_vel', 2.84),
                 ('lin_vel_step_size', 0.01),

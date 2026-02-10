@@ -54,6 +54,7 @@ class TeleopNode(Node):
         self.ang_vel_step_size = self.get_parameter('ang_vel_step_size').value
 
         # State
+        self.speed_multiplier = 1.0
         self.target_linear_velocity = 0.0
         self.target_angular_velocity = 0.0
         self.control_linear_velocity = 0.0
@@ -88,6 +89,8 @@ class TeleopNode(Node):
         elif key == 'd':
             self.target_angular_velocity = self.check_angular_limit_velocity(
                 self.target_angular_velocity - self.ang_vel_step_size)
+        elif key == 'z':
+            self.speed_multiplier = 2.0 if self.speed_multiplier == 1.0 else 1.0
         elif key == ' ':
             self.target_linear_velocity = 0.0
             self.control_linear_velocity = 0.0
@@ -102,10 +105,16 @@ class TeleopNode(Node):
         return input_vel
 
     def check_linear_limit_velocity(self, velocity):
-        return self.constrain(velocity, -self.max_linear_vel, self.max_linear_vel)
+        return self.constrain(
+            velocity,
+            -self.max_linear_vel * self.speed_multiplier,
+            self.max_linear_vel * self.speed_multiplier)
 
     def check_angular_limit_velocity(self, velocity):
-        return self.constrain(velocity, -self.max_angular_vel, self.max_angular_vel)
+        return self.constrain(
+            velocity,
+            -self.max_angular_vel * self.speed_multiplier,
+            self.max_angular_vel * self.speed_multiplier)
 
     def make_simple_profile(self, output_vel, input_vel, slop):
         if input_vel > output_vel:
@@ -183,7 +192,7 @@ def main(args=None):
         print(MSG)
         while rclpy.ok():
             key = node.get_key()
-            if key in ['w', 'a', 'd', ' ', 's']:
+            if key in ['w', 'a', 'd', ' ', 's', 'z']:
                 node.update_target_velocity(key)
                 print_vels(node.target_linear_velocity, node.target_angular_velocity)
                 status += 1

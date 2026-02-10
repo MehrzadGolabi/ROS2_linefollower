@@ -83,6 +83,18 @@ class TestKeyMapping(unittest.TestCase):
         self.assertAlmostEqual(self.node.target_linear_velocity, 0.0)
         self.assertAlmostEqual(self.node.target_angular_velocity, 0.0)
 
+    def test_speed_toggle(self):
+        # Initial state should be Normal (multiplier 1.0)
+        self.assertEqual(self.node.speed_multiplier, 1.0)
+
+        # Press 'z' to toggle to Fast (2.0)
+        self.node.update_target_velocity('z')
+        self.assertEqual(self.node.speed_multiplier, 2.0)
+
+        # Press 'z' again to toggle back to Normal (1.0)
+        self.node.update_target_velocity('z')
+        self.assertEqual(self.node.speed_multiplier, 1.0)
+
 
 if __name__ == '__main__':
     unittest.main()

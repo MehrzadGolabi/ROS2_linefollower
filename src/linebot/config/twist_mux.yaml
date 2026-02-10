@@ -7,14 +7,8 @@ twist_mux:
         priority: 10
         stamped : true
 
-            joystick:
-
-              topic   : joy_vel
-
-              timeout : 0.5
-
-              priority: 100
-
-              stamped : true
-
-      
+      joystick:
+        topic   : joy_vel
+        timeout : 0.5
+        priority: 100
+        stamped : true

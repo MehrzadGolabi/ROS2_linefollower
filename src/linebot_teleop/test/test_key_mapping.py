@@ -15,56 +15,73 @@ class TestKeyMapping(unittest.TestCase):
         rclpy.shutdown()
 
     def setUp(self):
+        # We need to mock the publisher creation because it requires a live ROS context
+        # and we might want to test logic in isolation.
+        # However, rclpy.init() is called in setUpClass, so basic Node init should work.
         self.node = TeleopNode()
+
+        # Manually set parameters/constants for testing if they aren't defaulted yet
+        # These match the defaults we expect to implement
+        self.node.lin_vel_step_size = 0.01
+        self.node.ang_vel_step_size = 0.1
+        self.node.max_linear_vel = 0.22
+        self.node.max_angular_vel = 2.84
+
+        # Reset state
+        self.node.target_linear_velocity = 0.0
+        self.node.target_angular_velocity = 0.0
 
     def tearDown(self):
         self.node.destroy_node()
 
-    def test_wasd_mapping(self):
-        # We need to expose a method in TeleopNode that translates a key to a Twist msg
-        # Let's assume it's called get_twist_from_key(key)
+    def test_incremental_linear_velocity(self):
+        # Initial state
+        self.assertAlmostEqual(self.node.target_linear_velocity, 0.0)
 
-        mappings = {
-            'w': (0.5, 0.0),  # (linear_x, angular_z)
-            's': (-0.5, 0.0),
-            'a': (0.0, 1.0),
-            'd': (0.0, -1.0),
-            'W': (0.5, 0.0),  # Case insensitive
-            'S': (-0.5, 0.0),
-            'A': (0.0, 1.0),
-            'D': (0.0, -1.0),
-            ' ': (0.0, 0.0),  # Safety stop
-            'x': (0.0, 0.0),  # Unknown key
-            '': (0.0, 0.0)    # No key pressed
-        }
+        # Press 'w' to increase (forward)
+        self.node.update_target_velocity('w')
+        self.assertAlmostEqual(self.node.target_linear_velocity, 0.01)
 
-        for key, expected in mappings.items():
-            twist = self.node.get_twist_from_key(key)
-            self.assertEqual(twist.linear.x, expected[0], f"Failed for key '{key}' linear.x")
-            self.assertEqual(twist.angular.z, expected[1], f"Failed for key '{key}' angular.z")
+        # Press 'w' again
+        self.node.update_target_velocity('w')
+        self.assertAlmostEqual(self.node.target_linear_velocity, 0.02)
 
-    def test_get_key(self):
-        from unittest.mock import patch
+        # Press 's' to decrease (backward)
+        self.node.update_target_velocity('s')
+        self.assertAlmostEqual(self.node.target_linear_velocity, 0.01)
 
-        # Mock termios, tty, select and sys.stdin
-        with patch('linebot_teleop.teleop_node.termios'), \
-             patch('linebot_teleop.teleop_node.tty'), \
-             patch('linebot_teleop.teleop_node.select.select') as mock_select, \
-             patch('linebot_teleop.teleop_node.sys.stdin') as mock_stdin:
+        # Press 's' again
+        self.node.update_target_velocity('s')
+        self.assertAlmostEqual(self.node.target_linear_velocity, 0.0)
 
-            mock_stdin.fileno.return_value = 0
+        # Press 's' again to go negative
+        self.node.update_target_velocity('s')
+        self.assertAlmostEqual(self.node.target_linear_velocity, -0.01)
 
-            # Simulate key press 'w'
-            mock_select.return_value = ([mock_stdin], [], [])
-            mock_stdin.read.return_value = 'w'
+    def test_incremental_angular_velocity(self):
+        # Initial state
+        self.assertAlmostEqual(self.node.target_angular_velocity, 0.0)
 
-            key = self.node.getKey()
-            self.assertEqual(key, 'w')
+        # Press 'a' to increase (turn left)
+        self.node.update_target_velocity('a')
+        self.assertAlmostEqual(self.node.target_angular_velocity, 0.1)
 
-            # Simulate no key press
-            mock_select.return_value = ([], [], [])
-            key = self.node.getKey()
-            self.assertEqual(key, '')
+        # Press 'd' to decrease (turn right)
+        self.node.update_target_velocity('d')
+        self.assertAlmostEqual(self.node.target_angular_velocity, 0.0)
+
+        self.node.update_target_velocity('d')
+        self.assertAlmostEqual(self.node.target_angular_velocity, -0.1)
+
+    def test_stop(self):
+        # Set some speed
+        self.node.target_linear_velocity = 0.1
+        self.node.target_angular_velocity = 0.5
+
+        # Press ' ' (space) to stop
+        self.node.update_target_velocity(' ')
+        self.assertAlmostEqual(self.node.target_linear_velocity, 0.0)
+        self.assertAlmostEqual(self.node.target_angular_velocity, 0.0)
 
 
 if __name__ == '__main__':

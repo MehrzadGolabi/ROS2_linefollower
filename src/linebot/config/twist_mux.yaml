@@ -12,3 +12,9 @@ twist_mux:
         timeout : 0.5
         priority: 100
         stamped : true
+
+      keyboard:
+        topic   : key_vel
+        timeout : 0.5
+        priority: 90
+        stamped : true

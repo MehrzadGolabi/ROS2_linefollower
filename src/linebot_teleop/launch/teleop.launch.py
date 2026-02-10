@@ -16,7 +16,7 @@ def generate_launch_description():
 
     declare_cmd_vel_topic = DeclareLaunchArgument(
         'cmd_vel_topic',
-        default_value='key_vel',
+        default_value='joy_vel',
         description='Topic to publish velocity commands to'
     )
 

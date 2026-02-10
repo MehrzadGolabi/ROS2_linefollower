@@ -26,8 +26,10 @@ def generate_launch_description():
         name='teleop_node',
         output='screen',
         emulate_tty=True,
-        parameters=[{'stamped': stamped}],
-        remappings=[('cmd_vel', cmd_vel_topic)]
+        parameters=[{
+            'stamped': stamped,
+            'topic_name': cmd_vel_topic
+        }]
     )
 
     return LaunchDescription([

@@ -40,6 +40,7 @@ class TeleopNode(Node):
             parameters=[
                 ('stamped', False),
                 ('frame_id', 'base_link'),
+                ('topic_name', 'cmd_vel'),
                 ('max_linear_vel', 0.22),
                 ('max_angular_vel', 2.84),
                 ('lin_vel_step_size', 0.01),
@@ -49,6 +50,7 @@ class TeleopNode(Node):
 
         self.stamped = self.get_parameter('stamped').value
         self.frame_id = self.get_parameter('frame_id').value
+        self.topic_name = self.get_parameter('topic_name').value
         self.max_linear_vel = self.get_parameter('max_linear_vel').value
         self.max_angular_vel = self.get_parameter('max_angular_vel').value
         self.lin_vel_step_size = self.get_parameter('lin_vel_step_size').value
@@ -70,9 +72,9 @@ class TeleopNode(Node):
         # Publisher
         qos = QoSProfile(depth=10)
         if self.stamped:
-            self.publisher_ = self.create_publisher(TwistStamped, 'cmd_vel', qos)
+            self.publisher_ = self.create_publisher(TwistStamped, self.topic_name, qos)
         else:
-            self.publisher_ = self.create_publisher(Twist, 'cmd_vel', qos)
+            self.publisher_ = self.create_publisher(Twist, self.topic_name, qos)
 
         self.get_logger().info(
             f'Teleop Node Started. Stamped: {self.stamped}, Max Lin: {self.max_linear_vel}')

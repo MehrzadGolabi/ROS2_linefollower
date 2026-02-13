@@ -5,16 +5,16 @@ linefollower_cv_node:
     cmd_vel_topic: "/joy_vel"
     
     # Speed parameters (dynamic speed control)
-    max_linear_speed: 0.4    # Max speed on straight sections
-    min_linear_speed: 0.15   # Min speed during sharp curves
+    max_linear_speed: 0.1    # Max speed on straight sections
+    min_linear_speed: 0.05   # Min speed during sharp curves
     
     # PID gains for steering control
-    kp: 0.03     # Proportional gain - main steering response
+    kp: 0.02     # Proportional gain - main steering response
     ki: 0.0001   # Integral gain - corrects steady-state error
-    kd: 0.016    # Derivative gain - dampens oscillation, anticipates changes
+    kd: 0.05    # Derivative gain - dampens oscillation, anticipates changes
     
     # Region of Interest (ROI) - crop area from image
-    # Expanded ROI for better path visibility (640x480 camera resolution)
+    # ROI for 640x480 camera resolution (matches both physical and simulation)
     roi_y_start: 100      # Less top crop - see further ahead
     roi_y_end: 400        # More bottom crop - see more of path
     roi_x_start: 20       # Less left crop - see wider path
@@ -36,9 +36,47 @@ linefollower_cv_node:
     # Canny edge detection thresholds
     canny_threshold_low: 50
     canny_threshold_high: 150
-    
+
+    # ===== EDGE CASE HANDLING FEATURES =====
+
+    # Gap handling (Phase 1) - Handle line cuts/interruptions
+    enable_gap_bridging: true
+    max_gap_frames: 10              # Maximum frames to bridge (0.33s at 30Hz)
+    gap_confidence_decay: 0.95      # Speed reduction per frame without line
+    gap_recovery_smoothing: 0.7     # EMA alpha for line position smoothing
+
+    # Preprocessing (Phase 1) - Handle blurred lines and lighting variations
+    enable_preprocessing: true
+    blur_kernel_size: 5              # Gaussian blur kernel (must be odd)
+    use_clahe: true                  # CLAHE contrast enhancement
+    clahe_clip_limit: 2.0            # CLAHE clipping limit
+    clahe_tile_grid_size: 8          # CLAHE tile grid size (e.g. 8x8)
+    use_adaptive_canny: true         # Adaptive vs fixed Canny thresholds
+    adaptive_canny_sigma: 0.33       # Sigma for adaptive threshold calculation
+    use_morphology: false            # Morphological operations
+    morph_kernel_size: 5             # Morphology kernel size (must be odd)
+    morph_op_type: "close"           # "dilate", "erode", "open", "close"
+    morph_iterations: 1              # Number of times to apply the operation
+    morph_apply_after_canny: true    # Apply after Canny (True) or before (False)
+
+    # Sharp turn detection (Phase 3) - Handle 90-degree turns
+    enable_sharp_turn_detection: true
+    sharp_turn_threshold: 0.2        # Normalized lateral deviation threshold
+    sharp_turn_exit_threshold: 0.3   # Threshold to exit turn mode
+    sharp_turn_min_speed: 0.05       # Minimum speed during sharp turns
+    sharp_turn_kp_multiplier: 2.0    # Temporary PID gain increase
+    sharp_turn_anticipation: 0.2     # Pre-turn bias (radians)
+
+    # Cul-de-sac detection (Phase 2) - Handle dead-ends
+    enable_cul_de_sac_detection: true
+    cul_de_sac_confidence_frames: 5  # Consecutive frames to confirm
+    cul_de_sac_turn_speed: 0.3       # Angular velocity during recovery (rad/s)
+    cul_de_sac_behavior: "rotate_in_place"  # "rotate_in_place" or "three_point_turn"
+    cul_de_sac_edge_threshold: 10    # Minimum white pixels on each edge
+    cul_de_sac_center_threshold: 5   # Maximum white pixels in center
+
     # Debug visualization
     show_debug_windows: true
-    
+
     # Use simulation time
     use_sim_time: true

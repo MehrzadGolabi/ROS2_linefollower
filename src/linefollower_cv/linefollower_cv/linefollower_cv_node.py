@@ -209,14 +209,23 @@ class LinefollowerCvNode(Node):
         else:
             self.clahe = None
 
-        # Morphology kernel
+        # Morphology configuration
         if self.use_morphology:
             self.morph_kernel = np.ones(
                 (self.morph_kernel_size, self.morph_kernel_size),
                 np.uint8
             )
+            # Map string operation type to OpenCV constants
+            self.morph_op_map = {
+                'dilate': cv2.MORPH_DILATE,
+                'erode': cv2.MORPH_ERODE,
+                'open': cv2.MORPH_OPEN,
+                'close': cv2.MORPH_CLOSE
+            }
+            self.morph_op = self.morph_op_map.get(self.morph_op_type, cv2.MORPH_CLOSE)
         else:
             self.morph_kernel = None
+            self.morph_op = None
         
         # Create subscriber and publisher
         self.camera_sub = self.create_subscription(
@@ -274,12 +283,17 @@ class LinefollowerCvNode(Node):
         else:
             enhanced = blurred
 
-        # Apply morphological operations if enabled
-        if self.use_morphology and self.morph_kernel is not None:
-            # Otsu's thresholding
+        # Apply morphological operations if enabled and applied BEFORE Canny
+        if self.use_morphology and not self.morph_apply_after_canny and self.morph_kernel is not None:
+            # For pre-Canny morphology on grayscale, we usually need binary first
+            # unless it's just dilate/erode. To stay safe and effective for line detection:
             _, binary = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            # Morphological closing to fill gaps
-            enhanced = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, self.morph_kernel)
+            enhanced = cv2.morphologyEx(
+                binary,
+                self.morph_op,
+                self.morph_kernel,
+                iterations=self.morph_iterations
+            )
 
         return enhanced
 
@@ -298,7 +312,8 @@ class LinefollowerCvNode(Node):
         # Calculate median pixel value
         median_intensity = np.median(image)
 
-        # Compute adaptive thresholds
+        # Compute adaptive thresholds using standard sigma approach
+        # A common value for sigma is 0.33
         sigma = self.adaptive_canny_sigma
         low = int(max(0, (1.0 - sigma) * median_intensity))
         high = int(min(255, (1.0 + sigma) * median_intensity))
@@ -532,6 +547,15 @@ class LinefollowerCvNode(Node):
         # Apply Canny edge detection with adaptive thresholds
         canny_low, canny_high = self.adaptive_canny_thresholds(preprocessed)
         edged = cv2.Canny(preprocessed, canny_low, canny_high)
+
+        # Apply morphological operations AFTER Canny if enabled
+        if self.use_morphology and self.morph_apply_after_canny and self.morph_kernel is not None:
+            edged = cv2.morphologyEx(
+                edged,
+                self.morph_op,
+                self.morph_kernel,
+                iterations=self.morph_iterations
+            )
         
         # Check for cul-de-sac before normal line detection
         if self.detect_cul_de_sac(edged):

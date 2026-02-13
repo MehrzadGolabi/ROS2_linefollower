@@ -1,33 +1,57 @@
 #!/usr/bin/env python3
+
+"""
+Node for IR-based line following.
+
+This node subscribes to IR sensor data and publishes velocity commands
+to steer the robot along a line.
+"""
+
+from geometry_msgs.msg import TwistStamped
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from geometry_msgs.msg import TwistStamped
+
 
 class LinefollowerIrNode(Node):
+    """
+    ROS 2 node for IR line following.
+
+    Maps 5-bit IR sensor patterns to differential drive velocity commands.
+    """
+
     def __init__(self):
-        super().__init__("linefollower_ir_node")
-        
+        """Initialize parameters, subscribers, and publishers."""
+        super().__init__('linefollower_ir_node')
+
         # Parameters
-        self.declare_parameter("linear_speed", 0.2)
-        self.declare_parameter("angular_speed", 1.0)
-        
-        self.linear_speed = self.get_parameter("linear_speed").value
-        self.angular_speed = self.get_parameter("angular_speed").value
-        
+        self.declare_parameter('linear_speed', 0.2)
+        self.declare_parameter('angular_speed', 1.0)
+        # New parameter for stiction
+        self.declare_parameter('min_turn_speed', 0.08)
+
+        self.linear_speed = self.get_parameter('linear_speed').value
+        self.angular_speed = self.get_parameter('angular_speed').value
+        self.min_turn_speed = self.get_parameter('min_turn_speed').value
+
         # Subscribers and Publishers
-        # Subscribe to the string topic published by the hardware interface
-        self.ir_sub = self.create_subscription(String, "/ir_sensors", self.ir_callback, 10)
-        # Publish TwistStamped to /joy_vel (which is muxed)
-        self.cmd_vel_pub = self.create_publisher(TwistStamped, "/joy_vel", 10)
-        
-        self.get_logger().info("IR Line Follower Node Started")
+        self.ir_sub = self.create_subscription(
+            String, '/ir_sensors', self.ir_callback, 10)
+        self.cmd_vel_pub = self.create_publisher(
+            TwistStamped, '/joy_vel', 10)
+
+        self.get_logger().info('IR Line Follower Node Started (Revised Logic)')
 
     def ir_callback(self, msg):
+        """
+        Process IR sensor data and publish velocity commands.
+
+        :param msg: String message containing IR sensor states.
+        """
         ir_data = msg.data.strip()
-        
-        # If the data is a decimal number (0-31 from hardware bridge), convert to 5-bit binary string
-        # Valid decimal values (0-31) will have length < 5. Binary strings have length 5.
+
+        # Normalize IR data to 5-bit binary string
         if ir_data.isdigit() and len(ir_data) < 5:
             try:
                 val = int(ir_data)
@@ -37,54 +61,84 @@ class LinefollowerIrNode(Node):
         else:
             ir_str = ir_data
 
-        twist = TwistStamped()
-        twist.header.stamp = self.get_clock().now().to_msg()
-        twist.header.frame_id = "base_link"
-        
-        if len(ir_str) < 5:
+        if len(ir_str) != 5:
+            # Handle unexpected data length
+            self.get_logger().warn(f'Invalid IR data length: {ir_str}')
             return
 
-        self.get_logger().info(f"IR State: {ir_str}")
-        
-        # Logic based on '0' = Line, '1' = Background (inferred from Arduino code)
-        
-        if ir_str == "11011":
-            # Center: Go Straight
-            twist.twist.linear.x = self.linear_speed
-            twist.twist.angular.z = 0.0
-            
-        elif ir_str in ["10011", "10111"]:
-            # Left Detected: Turn Left
-            twist.twist.linear.x = self.linear_speed * 0.5
-            twist.twist.angular.z = self.angular_speed * 0.5
-            
-        elif ir_str in ["00011", "00111", "01111"]:
-            # Hard Left
-            twist.twist.linear.x = 0.05
-            twist.twist.angular.z = self.angular_speed
-            
-        elif ir_str in ["11001", "11101"]:
-            # Right Detected: Turn Right
-            twist.twist.linear.x = self.linear_speed * 0.5
-            twist.twist.angular.z = -self.angular_speed * 0.5
-            
-        elif ir_str in ["11100", "11110", "11000"]:
-            # Hard Right
-            twist.twist.linear.x = 0.05
-            twist.twist.angular.z = -self.angular_speed
-            
-        elif ir_str == "11111":
-            twist.twist.linear.x = 0.2
-            twist.twist.angular.z = 0.2
-            
+        twist = TwistStamped()
+        twist.header.stamp = self.get_clock().now().to_msg()
+        twist.header.frame_id = 'base_link'
+
+        linear_x = 0.0
+        angular_z = 0.0
+
+        # Mapping: '0' = Line (Black), '1' = Background (White)
+        # SENSORS: [Left2, Left1, Center, Right1, Right2]
+
+        if ir_str == '11011':
+            # Perfectly Centered
+            linear_x = self.linear_speed
+            angular_z = 0.0
+
+        elif ir_str in ['10011', '10111']:
+            # Slight Left Offset -> Turn Left
+            linear_x = max(self.linear_speed * 0.75, self.min_turn_speed)
+            angular_z = self.angular_speed * 0.4
+
+        elif ir_str in ['00111', '01111', '00011', '00110']:
+            # Strong Left Offset -> Hard Left
+            linear_x = self.min_turn_speed
+            angular_z = self.angular_speed * 0.8
+
+        elif ir_str in ['11001', '11101']:
+            # Slight Right Offset -> Turn Right
+            linear_x = max(self.linear_speed * 0.75, self.min_turn_speed)
+            angular_z = -self.angular_speed * 0.4
+
+        elif ir_str in ['11100', '11110', '11000', '01100']:
+            # Strong Right Offset -> Hard Right
+            linear_x = self.min_turn_speed
+            angular_z = -self.angular_speed * 0.8
+
+        elif ir_str in ['00000', '01010', '10101']:
+            # Full line or confusing pattern: move slowly forward
+            linear_x = self.min_turn_speed
+            angular_z = 0.0
+
+        elif ir_str == '11111':
+            # No line detected: Stop or slow search
+            linear_x = 0.0
+            angular_z = 0.0
+            self.get_logger().debug('Line lost')
+
         else:
-            # Default stop
-            twist.twist.linear.x = 0.0
-            twist.twist.angular.z = 0.0
-            
+            # Any other case (multiple sensors but not centered)
+            # Try to infer direction based on which side has more '0's
+            zeros_left = ir_str[:2].count('0')
+            zeros_right = ir_str[3:].count('0')
+
+            if zeros_left > zeros_right:
+                linear_x = self.min_turn_speed
+                angular_z = self.angular_speed * 0.6
+            elif zeros_right > zeros_left:
+                linear_x = self.min_turn_speed
+                angular_z = -self.angular_speed * 0.6
+            else:
+                linear_x = 0.0
+                angular_z = 0.0
+
+        twist.twist.linear.x = linear_x
+        twist.twist.angular.z = angular_z
+
         self.cmd_vel_pub.publish(twist)
+        self.get_logger().info(
+            f'IR: {ir_str} -> L: {linear_x:.2f}, A: {angular_z:.2f}',
+            throttle_duration_sec=0.5)
+
 
 def main(args=None):
+    """Initialize and spin the node."""
     rclpy.init(args=args)
     node = LinefollowerIrNode()
     try:
@@ -94,6 +148,7 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.try_shutdown()
+
 
 if __name__ == '__main__':
     main()

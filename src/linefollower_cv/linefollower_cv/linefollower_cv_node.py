@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Line Following CV Node - Enhanced Version with Edge Case Handling
+Line Following CV Node - Enhanced Version with Edge Case Handling.
 
 Uses OpenCV to detect a black line on white background and
 publishes velocity commands to follow it.
@@ -15,19 +15,21 @@ Features:
 - Sharp turn detection and handling
 """
 
+from enum import Enum
+import time
+
+import cv2
+from cv_bridge import CvBridge
+from geometry_msgs.msg import TwistStamped
+import numpy as np
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import TwistStamped
-from cv_bridge import CvBridge
-import cv2
-import time
-import numpy as np
-from enum import Enum
 
 
 class FollowerState(Enum):
     """State machine for line follower operational modes."""
+
     NORMAL = 1
     GAP_BRIDGING = 2
     SHARP_TURN = 3
@@ -38,37 +40,38 @@ class LinefollowerCvNode(Node):
 
     def __init__(self):
         super().__init__('linefollower_cv_node')
-        
+
         # Declare parameters with defaults
         self.declare_parameter('camera_topic', '/camera/image_raw')
         self.declare_parameter('cmd_vel_topic', '/joy_vel')
-        
+
         # Speed parameters
         self.declare_parameter('max_linear_speed', 0.2)
         self.declare_parameter('min_linear_speed', 0.05)
-        
+        self.declare_parameter('max_angular_speed', 0.5)
+
         # PID gains
         self.declare_parameter('kp', 0.01)  # Proportional gain
         self.declare_parameter('ki', 0.0001)  # Integral gain
         self.declare_parameter('kd', 0.05)  # Derivative gain
-        
+
         # ROI parameters
         self.declare_parameter('roi_y_start', 150)
         self.declare_parameter('roi_y_end', 240)
         self.declare_parameter('roi_x_start', 60)
         self.declare_parameter('roi_x_end', 260)
-        
+
         # Multi-point detection rows (percentage of ROI height from top)
         # Near = close to robot, Far = looking ahead
         self.declare_parameter('detection_row_near', 0.85)   # 85% down (close)
         self.declare_parameter('detection_row_mid', 0.60)    # 60% down (middle)
         self.declare_parameter('detection_row_far', 0.35)    # 35% down (far/lookahead)
-        
+
         # Weights for multi-point detection
         self.declare_parameter('weight_near', 0.5)
         self.declare_parameter('weight_mid', 0.3)
         self.declare_parameter('weight_far', 0.2)
-        
+
         # Edge detection
         self.declare_parameter('canny_threshold_low', 50)
         self.declare_parameter('canny_threshold_high', 150)
@@ -111,12 +114,13 @@ class LinefollowerCvNode(Node):
 
         # Debug
         self.declare_parameter('show_debug_windows', True)
-        
+
         # Get parameter values
         camera_topic = self.get_parameter('camera_topic').value
         cmd_vel_topic = self.get_parameter('cmd_vel_topic').value
         self.max_speed = self.get_parameter('max_linear_speed').value
         self.min_speed = self.get_parameter('min_linear_speed').value
+        self.max_angular_speed = self.get_parameter('max_angular_speed').value
         self.kp = self.get_parameter('kp').value
         self.ki = self.get_parameter('ki').value
         self.kd = self.get_parameter('kd').value
@@ -170,14 +174,14 @@ class LinefollowerCvNode(Node):
         self.cul_de_sac_center_thresh = self.get_parameter('cul_de_sac_center_threshold').value
 
         self.show_debug = self.get_parameter('show_debug_windows').value
-        
+
         # CV Bridge for image conversion
         self.bridge = CvBridge()
-        
+
         # Velocity message (TwistStamped for twist_mux compatibility)
         self.vel_msg = TwistStamped()
         self.vel_msg.header.frame_id = 'base_link'
-        
+
         # PID state
         self.prev_error = 0.0
         self.integral = 0.0
@@ -226,7 +230,7 @@ class LinefollowerCvNode(Node):
         else:
             self.morph_kernel = None
             self.morph_op = None
-        
+
         # Create subscriber and publisher
         self.camera_sub = self.create_subscription(
             Image,
@@ -234,38 +238,45 @@ class LinefollowerCvNode(Node):
             self.camera_callback,
             10
         )
-        
+
         self.cmd_vel_pub = self.create_publisher(
             TwistStamped,
             cmd_vel_topic,
             10
         )
-        
+
         # Calculate ROI dimensions
         self.roi_width = self.roi_x_end - self.roi_x_start
         self.roi_height = self.roi_y_end - self.roi_y_start
         self.roi_center_x = self.roi_width // 2
-        
+
         # Calculate detection row positions
         self.row_near = int(self.roi_height * self.row_near_pct)
         self.row_mid = int(self.roi_height * self.row_mid_pct)
         self.row_far = int(self.roi_height * self.row_far_pct)
-        
-        self.get_logger().info(f'Enhanced Line Follower started!')
+
+        self.get_logger().info('Enhanced Line Follower started!')
         self.get_logger().info(f'  Camera: {camera_topic}')
         self.get_logger().info(f'  Cmd vel: {cmd_vel_topic}')
         self.get_logger().info(f'  PID: Kp={self.kp}, Ki={self.ki}, Kd={self.kd}')
         self.get_logger().info(f'  Speed range: {self.min_speed} - {self.max_speed}')
-        self.get_logger().info(f'  Detection rows: near={self.row_near}, mid={self.row_mid}, far={self.row_far}')
+        self.get_logger().info(
+            f'  Detection rows: near={self.row_near}, mid={self.row_mid}, far={self.row_far}')
 
     def preprocess_image(self, roi):
-        """Apply preprocessing pipeline for robust edge detection.
+        """
+        Apply preprocessing pipeline for robust edge detection.
 
-        Args:
-            roi: Input ROI image (BGR format)
+        Args
+        ----
+        roi : ndarray
+            Input ROI image (BGR format).
 
-        Returns:
-            Preprocessed grayscale image ready for Canny edge detection
+        Returns
+        -------
+        ndarray
+            Preprocessed grayscale image ready for Canny edge detection.
+
         """
         if not self.enable_preprocessing:
             # Just convert to grayscale if preprocessing disabled
@@ -284,7 +295,8 @@ class LinefollowerCvNode(Node):
             enhanced = blurred
 
         # Apply morphological operations if enabled and applied BEFORE Canny
-        if self.use_morphology and not self.morph_apply_after_canny and self.morph_kernel is not None:
+        if self.use_morphology and not self.morph_apply_after_canny and \
+           self.morph_kernel is not None:
             # For pre-Canny morphology on grayscale, we usually need binary first
             # unless it's just dilate/erode. To stay safe and effective for line detection:
             _, binary = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -298,13 +310,19 @@ class LinefollowerCvNode(Node):
         return enhanced
 
     def adaptive_canny_thresholds(self, image):
-        """Calculate adaptive Canny thresholds based on image statistics.
+        """
+        Calculate adaptive Canny thresholds based on image statistics.
 
-        Args:
-            image: Grayscale image
+        Args
+        ----
+        image : ndarray
+            Grayscale image.
 
-        Returns:
-            Tuple of (low_threshold, high_threshold)
+        Returns
+        -------
+        tuple
+            Tuple of (low_threshold, high_threshold).
+
         """
         if not self.use_adaptive_canny:
             return self.canny_low, self.canny_high
@@ -321,11 +339,16 @@ class LinefollowerCvNode(Node):
         return low, high
 
     def update_line_memory(self, error, line_detected):
-        """Update line memory for gap bridging.
+        """
+        Update line memory for gap bridging.
 
         Args:
-            error: Current error value
-            line_detected: Boolean indicating if line was detected
+        ----
+        error : float
+            Current error value.
+        line_detected : bool
+            Boolean indicating if line was detected.
+
         """
         if line_detected:
             # Update smoothed error with exponential moving average
@@ -337,10 +360,14 @@ class LinefollowerCvNode(Node):
             self.frames_since_last_detection += 1
 
     def handle_line_gap(self):
-        """Apply dead reckoning when line is lost.
+        """
+        Apply dead reckoning when line is lost.
 
-        Returns:
-            Tuple of (error, speed_factor) to use during gap
+        Returns
+        -------
+        tuple
+            Tuple of (error, speed_factor) to use during gap.
+
         """
         if self.frames_since_last_detection <= self.max_gap_frames:
             # Use last known error with decaying confidence
@@ -353,15 +380,22 @@ class LinefollowerCvNode(Node):
             return 0.0, 0.0
 
     def detect_sharp_turn(self, center_near, center_far):
-        """Detect sharp turns based on lateral deviation.
+        """
+        Detect sharp turns based on lateral deviation.
 
-        Args:
-            center_near: Line center at near detection point
-            center_far: Line center at far detection point
+        Args
+        ----
+        center_near : int
+            Line center at near detection point.
+        center_far : int
+            Line center at far detection point.
 
-        Returns:
-            Tuple of (is_sharp_turn, turn_direction)
-            turn_direction: +1 for left (positive angular_z), -1 for right (negative angular_z), 0 for none
+        Returns
+        -------
+        tuple
+            Tuple of (is_sharp_turn, turn_direction).
+            turn_direction: +1 for left (positive angular_z), -1 for right, 0 for none.
+
         """
         if not self.enable_sharp_turn:
             return False, 0
@@ -388,14 +422,21 @@ class LinefollowerCvNode(Node):
         return self.sharp_turn_active, self.sharp_turn_direction
 
     def apply_sharp_turn_control(self, base_speed, base_kp):
-        """Modify control parameters for sharp turns.
+        """
+        Modify control parameters for sharp turns.
 
-        Args:
-            base_speed: Base linear speed
-            base_kp: Base Kp gain
+        Args
+        ----
+        base_speed : float
+            Base linear speed.
+        base_kp : float
+            Base Kp gain.
 
-        Returns:
-            Tuple of (modified_speed, modified_kp, weight_near, weight_mid, weight_far)
+        Returns
+        -------
+        tuple
+            Tuple of (modified_speed, modified_kp, weight_near, weight_mid, weight_far).
+
         """
         if self.sharp_turn_active:
             # Aggressive speed reduction
@@ -409,13 +450,19 @@ class LinefollowerCvNode(Node):
             return base_speed, base_kp, self.weight_near, self.weight_mid, self.weight_far
 
     def detect_cul_de_sac(self, edged):
-        """Detect U-shaped cul-de-sac pattern.
+        """
+        Detect U-shaped cul-de-sac pattern.
 
-        Args:
-            edged: Edge-detected image
+        Args
+        ----
+        edged : ndarray
+            Edge-detected image.
 
-        Returns:
-            Boolean indicating if cul-de-sac detected
+        Returns
+        -------
+        bool
+            Boolean indicating if cul-de-sac detected.
+
         """
         if not self.enable_cul_de_sac:
             return False
@@ -457,10 +504,14 @@ class LinefollowerCvNode(Node):
         return False
 
     def execute_cul_de_sac_recovery(self):
-        """Execute recovery maneuver for cul-de-sac.
+        """
+        Execute recovery maneuver for cul-de-sac.
 
-        Returns:
-            Tuple of (linear_speed, angular_speed) for recovery
+        Returns
+        -------
+        tuple
+            Tuple of (linear_speed, angular_speed) for recovery.
+
         """
         if not self.cul_de_sac_recovery_active:
             # Start recovery
@@ -489,7 +540,7 @@ class LinefollowerCvNode(Node):
                 return -0.05, 0.0
             elif elapsed < 12.5:
                 # Rotate 180°
-                return 0.0, self.cul_de_sac_turn_speed
+                return 0.0, self.get_parameter('cul_de_sac_turn_speed').value
             else:
                 # Recovery complete
                 self.cul_de_sac_recovery_active = False
@@ -549,14 +600,15 @@ class LinefollowerCvNode(Node):
         edged = cv2.Canny(preprocessed, canny_low, canny_high)
 
         # Apply morphological operations AFTER Canny if enabled
-        if self.use_morphology and self.morph_apply_after_canny and self.morph_kernel is not None:
+        if self.use_morphology and self.morph_apply_after_canny and \
+           self.morph_kernel is not None:
             edged = cv2.morphologyEx(
                 edged,
                 self.morph_op,
                 self.morph_kernel,
                 iterations=self.morph_iterations
             )
-        
+
         # Check for cul-de-sac before normal line detection
         if self.detect_cul_de_sac(edged):
             self.current_state = FollowerState.CUL_DE_SAC_RECOVERY
@@ -584,7 +636,8 @@ class LinefollowerCvNode(Node):
             self.sharp_turn_active = True
             self.sharp_turn_direction = turn_direction
             self.current_state = FollowerState.SHARP_TURN
-            self.get_logger().info(f'Sharp turn detected: {"left" if turn_direction > 0 else "right"}')
+            self.get_logger().info(
+                f'Sharp turn detected: {"left" if turn_direction > 0 else "right"}')
         elif not is_sharp_turn and self.sharp_turn_active:
             # Exit sharp turn mode - reset all flags
             self.sharp_turn_active = False
@@ -607,7 +660,7 @@ class LinefollowerCvNode(Node):
             if self.show_debug:
                 cv2.circle(edged, (center_near, self.row_near), 4, 255, 2)
                 cv2.line(edged, (self.roi_center_x, self.row_near),
-                        (center_near, self.row_near), 255, 1)
+                         (center_near, self.row_near), 255, 1)
 
         if center_mid is not None:
             errors.append(self.roi_center_x - center_mid)
@@ -615,7 +668,7 @@ class LinefollowerCvNode(Node):
             if self.show_debug:
                 cv2.circle(edged, (center_mid, self.row_mid), 4, 255, 2)
                 cv2.line(edged, (self.roi_center_x, self.row_mid),
-                        (center_mid, self.row_mid), 255, 1)
+                         (center_mid, self.row_mid), 255, 1)
 
         if center_far is not None:
             errors.append(self.roi_center_x - center_far)
@@ -623,7 +676,7 @@ class LinefollowerCvNode(Node):
             if self.show_debug:
                 cv2.circle(edged, (center_far, self.row_far), 4, 255, 2)
                 cv2.line(edged, (self.roi_center_x, self.row_far),
-                        (center_far, self.row_far), 255, 1)
+                         (center_far, self.row_far), 255, 1)
 
         # Calculate weighted average error
         line_detected = len(errors) > 0
@@ -657,7 +710,7 @@ class LinefollowerCvNode(Node):
         curve_ahead = 0.0
         if center_near is not None and center_far is not None:
             curve_ahead = abs((self.roi_center_x - center_far) - (self.roi_center_x - center_near))
-        
+
         # PID control
         current_time = time.time()
         dt = current_time - self.prev_time
@@ -686,6 +739,9 @@ class LinefollowerCvNode(Node):
         if self.sharp_turn_active:
             angular_z += self.sharp_turn_anticipation * self.sharp_turn_direction
 
+        # Clamp angular velocity for safety
+        angular_z = max(-self.max_angular_speed, min(self.max_angular_speed, angular_z))
+
         # Dynamic speed control
         # Slow down based on: 1) current error, 2) curve ahead
         error_factor = 1.0 - min(abs(error) / (self.roi_width / 2), 0.7)
@@ -702,22 +758,22 @@ class LinefollowerCvNode(Node):
         if self.sharp_turn_active:
             sharp_turn_speed, _, _, _, _ = self.apply_sharp_turn_control(linear_speed, self.kp)
             linear_speed = sharp_turn_speed
-        
+
         # Update PID state
         self.prev_error = error
         self.prev_time = current_time
-        
+
         # Publish velocity command
         self.vel_msg.header.stamp = self.get_clock().now().to_msg()
         self.vel_msg.twist.linear.x = linear_speed
         self.vel_msg.twist.angular.z = float(angular_z)
         self.cmd_vel_pub.publish(self.vel_msg)
-        
+
         # Debug visualization
         if self.show_debug:
             # Draw center reference line
             cv2.line(edged, (self.roi_center_x, 0),
-                    (self.roi_center_x, self.roi_height), 128, 1)
+                     (self.roi_center_x, self.roi_height), 128, 1)
 
             # Draw detection rows
             cv2.line(edged, (0, self.row_near), (self.roi_width, self.row_near), 128, 1)
@@ -726,18 +782,18 @@ class LinefollowerCvNode(Node):
 
             # Add text info
             cv2.putText(roi, f'Err: {error:.1f}', (10, 20),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
             cv2.putText(roi, f'Spd: {linear_speed:.2f}', (10, 40),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
             cv2.putText(roi, f'Ang: {angular_z:.3f}', (10, 60),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
             cv2.putText(roi, f'State: {self.current_state.name}', (10, 80),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
             # Show gap frames if in gap bridging
             if self.current_state == FollowerState.GAP_BRIDGING:
                 cv2.putText(roi, f'Gap: {self.frames_since_last_detection}/{self.max_gap_frames}',
-                           (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+                            (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
 
             cv2.imshow('ROI', roi)
             cv2.imshow('Edge Detection', edged)
@@ -756,7 +812,7 @@ class LinefollowerCvNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = LinefollowerCvNode()
-    
+
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

@@ -137,31 +137,31 @@ class LinefollowerIrNode(Node):
                 self.get_logger().info(f'Entering committed Hard Right (IR: {ir_str})')
 
             elif ir_str in ['00000', '01010', '10101']:
-            # Full line or confusing pattern: move slowly forward
-            linear_x = self.min_turn_speed
-            angular_z = 0.0
-
-        elif ir_str == '11111':
-            # No line detected: Stop or slow search
-            linear_x = self.min_turn_speed
-            angular_z = 0.0
-            self.get_logger().debug('Line lost')
-
-        else:
-            # Any other case (multiple sensors but not centered)
-            # Try to infer direction based on which side has more '0's
-            zeros_left = ir_str[:2].count('0')
-            zeros_right = ir_str[3:].count('0')
-
-            if zeros_left > zeros_right:
+                # Full line or confusing pattern: move slowly forward
                 linear_x = self.min_turn_speed
-                angular_z = self.angular_speed * 0.6
-            elif zeros_right > zeros_left:
-                linear_x = self.min_turn_speed
-                angular_z = -self.angular_speed * 0.6
-            else:
-                linear_x = 0.0
                 angular_z = 0.0
+
+            elif ir_str == '11111':
+                # No line detected: Stop or slow search
+                linear_x = self.min_turn_speed
+                angular_z = 0.0
+                self.get_logger().debug('Line lost')
+
+            else:
+                # Any other case (multiple sensors but not centered)
+                # Try to infer direction based on which side has more '0's
+                zeros_left = ir_str[:2].count('0')
+                zeros_right = ir_str[3:].count('0')
+
+                if zeros_left > zeros_right:
+                    linear_x = self.min_turn_speed
+                    angular_z = self.angular_speed * 0.6
+                elif zeros_right > zeros_left:
+                    linear_x = self.min_turn_speed
+                    angular_z = -self.angular_speed * 0.6
+                else:
+                    linear_x = 0.0
+                    angular_z = 0.0
 
         twist.twist.linear.x = linear_x
         twist.twist.angular.z = angular_z

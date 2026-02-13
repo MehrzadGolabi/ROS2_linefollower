@@ -30,10 +30,12 @@ class LinefollowerIrNode(Node):
         self.declare_parameter('angular_speed', 1.0)
         # New parameter for stiction
         self.declare_parameter('min_turn_speed', 0.08)
+        self.declare_parameter('min_turn_duration', 0.5)
 
         self.linear_speed = self.get_parameter('linear_speed').value
         self.angular_speed = self.get_parameter('angular_speed').value
         self.min_turn_speed = self.get_parameter('min_turn_speed').value
+        self.min_turn_duration = self.get_parameter('min_turn_duration').value
 
         # Subscribers and Publishers
         self.ir_sub = self.create_subscription(
@@ -108,7 +110,7 @@ class LinefollowerIrNode(Node):
 
         elif ir_str == '11111':
             # No line detected: Stop or slow search
-            linear_x = 0.0
+            linear_x = self.min_turn_speed
             angular_z = 0.0
             self.get_logger().debug('Line lost')
 

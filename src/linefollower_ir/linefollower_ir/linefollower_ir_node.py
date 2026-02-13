@@ -8,7 +8,6 @@ to steer the robot along a line.
 """
 
 from geometry_msgs.msg import TwistStamped
-
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String

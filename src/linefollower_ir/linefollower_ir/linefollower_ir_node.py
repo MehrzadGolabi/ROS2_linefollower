@@ -37,6 +37,11 @@ class LinefollowerIrNode(Node):
         self.min_turn_speed = self.get_parameter('min_turn_speed').value
         self.min_turn_duration = self.get_parameter('min_turn_duration').value
 
+        # State for committed turns
+        self.is_hard_turning = False
+        self.turn_start_time = None
+        self.hard_turn_angular_z = 0.0
+
         # Subscribers and Publishers
         self.ir_sub = self.create_subscription(
             String, '/ir_sensors', self.ir_callback, 10)
@@ -75,35 +80,63 @@ class LinefollowerIrNode(Node):
         linear_x = 0.0
         angular_z = 0.0
 
-        # Mapping: '0' = Line (Black), '1' = Background (White)
-        # SENSORS: [Left2, Left1, Center, Right1, Right2]
+        # Check for committed turn
+        if self.is_hard_turning:
+            elapsed = (self.get_clock().now() - self.turn_start_time).nanoseconds / 1e9
+            if elapsed < self.min_turn_duration:
+                # Still committed by time
+                linear_x = self.min_turn_speed
+                angular_z = self.hard_turn_angular_z
+            elif ir_str == '11011':
+                # Time passed AND center detected: exit commitment
+                self.is_hard_turning = False
+                self.get_logger().info('Committed turn completed')
+            else:
+                # Time passed but center not yet detected: maintain turn
+                linear_x = self.min_turn_speed
+                angular_z = self.hard_turn_angular_z
 
-        if ir_str == '11011':
-            # Perfectly Centered
-            linear_x = self.linear_speed
-            angular_z = 0.0
+        # If not (or no longer) hard turning, process patterns
+        if not self.is_hard_turning:
+            # Mapping: '0' = Line (Black), '1' = Background (White)
+            # SENSORS: [Left2, Left1, Center, Right1, Right2]
 
-        elif ir_str in ['10011', '10111']:
-            # Slight Left Offset -> Turn Left
-            linear_x = max(self.linear_speed * 0.75, self.min_turn_speed)
-            angular_z = self.angular_speed * 0.4
+            if ir_str == '11011':
+                # Perfectly Centered
+                linear_x = self.linear_speed
+                angular_z = 0.0
 
-        elif ir_str in ['00111', '01111', '00011', '00110']:
-            # Strong Left Offset -> Hard Left
-            linear_x = self.min_turn_speed
-            angular_z = self.angular_speed * 0.8
+            elif ir_str in ['10011', '10111']:
+                # Slight Left Offset -> Turn Left
+                linear_x = max(self.linear_speed * 0.75, self.min_turn_speed)
+                angular_z = self.angular_speed * 0.4
 
-        elif ir_str in ['11001', '11101']:
-            # Slight Right Offset -> Turn Right
-            linear_x = max(self.linear_speed * 0.75, self.min_turn_speed)
-            angular_z = -self.angular_speed * 0.4
+            elif ir_str in ['00111', '01111', '00011', '00110']:
+                # Strong Left Offset -> Hard Left
+                linear_x = self.min_turn_speed
+                angular_z = self.angular_speed * 0.8
+                # Enter commitment
+                self.is_hard_turning = True
+                self.turn_start_time = self.get_clock().now()
+                self.hard_turn_angular_z = angular_z
+                self.get_logger().info(f'Entering committed Hard Left (IR: {ir_str})')
 
-        elif ir_str in ['11100', '11110', '11000', '01100']:
-            # Strong Right Offset -> Hard Right
-            linear_x = self.min_turn_speed
-            angular_z = -self.angular_speed * 0.8
+            elif ir_str in ['11001', '11101']:
+                # Slight Right Offset -> Turn Right
+                linear_x = max(self.linear_speed * 0.75, self.min_turn_speed)
+                angular_z = -self.angular_speed * 0.4
 
-        elif ir_str in ['00000', '01010', '10101']:
+            elif ir_str in ['11100', '11110', '11000', '01100']:
+                # Strong Right Offset -> Hard Right
+                linear_x = self.min_turn_speed
+                angular_z = -self.angular_speed * 0.8
+                # Enter commitment
+                self.is_hard_turning = True
+                self.turn_start_time = self.get_clock().now()
+                self.hard_turn_angular_z = angular_z
+                self.get_logger().info(f'Entering committed Hard Right (IR: {ir_str})')
+
+            elif ir_str in ['00000', '01010', '10101']:
             # Full line or confusing pattern: move slowly forward
             linear_x = self.min_turn_speed
             angular_z = 0.0

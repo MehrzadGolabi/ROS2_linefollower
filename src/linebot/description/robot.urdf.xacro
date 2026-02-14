@@ -4,6 +4,8 @@
     <xacro:arg name="use_ros2_control"              default="true"/>
     <xacro:arg name="use_ros2_control_gz_sim"       default="false"/>
     <xacro:arg name="enable_ir"                     default="false"/>
+    <xacro:arg name="control_mode"                  default="closed_loop"/>
+    <xacro:arg name="velocity_to_pwm_scale"         default="75.0"/>
 
     <!-- Robot_frames -->
     <xacro:include filename = "robot_main.xacro" />

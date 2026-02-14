@@ -38,6 +38,10 @@
   #define PWMB 25 // Speed control (PWM)
   #define BIN1 26 // Direction
   #define BIN2 27 // Direction
+
+  // PWM Configuration for TB6612
+  #define PWM_FREQUENCY 20000 // 20 kHz - optimal for TB6612FNG
+  #define PWM_RESOLUTION 8    // 8-bit resolution (0-255)
 #endif
 
 void initMotorController();

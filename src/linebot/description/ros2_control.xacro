@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+    <xacro:arg name="control_mode" default="closed_loop"/>
+    <xacro:arg name="velocity_to_pwm_scale" default="75.0"/>
+
     <xacro:unless value="$(arg use_ros2_control_gz_sim)">
         <ros2_control name="RobotSystem" type="system">
             <hardware>
@@ -8,11 +11,13 @@
                     <param name="left_wheel_name">left_wheel_joint</param>
                     <param name="right_wheel_name">right_wheel_joint</param>
                     <param name="loop_rate">30</param>
-                    <param name="device">/dev/ttyUSB1</param>
+                    <param name="device">/dev/ttyUSB0</param>
                     <param name="baud_rate">115200</param>
                     <param name="timeout_ms">1000</param>
-                    <param name="enc_counts_per_rev">616</param> 
+                    <param name="enc_counts_per_rev">616</param>
                     <param name="enable_ir">$(arg enable_ir)</param>
+                    <param name="control_mode">$(arg control_mode)</param>
+                    <param name="velocity_to_pwm_scale">$(arg velocity_to_pwm_scale)</param>
             </hardware>
             <joint name="left_wheel_joint">
                 <command_interface name="velocity">

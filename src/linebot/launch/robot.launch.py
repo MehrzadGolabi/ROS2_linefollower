@@ -37,6 +37,8 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_ros2_control = LaunchConfiguration('use_ros2_control')
     mode = LaunchConfiguration('mode')
+    control_mode = LaunchConfiguration('control_mode')
+    velocity_to_pwm_scale = LaunchConfiguration('velocity_to_pwm_scale')
 
     declare_use_sim_time= DeclareLaunchArgument(
         'use_sim_time',
@@ -60,6 +62,18 @@ def generate_launch_description():
         'rviz',
         default_value='false',
         description='Launch RViz with hardware debug config'
+    )
+
+    declare_control_mode = DeclareLaunchArgument(
+        'control_mode',
+        default_value='closed_loop',
+        description='Motor control mode: closed_loop (PID) or open_loop (direct PWM)'
+    )
+
+    declare_velocity_to_pwm_scale = DeclareLaunchArgument(
+        'velocity_to_pwm_scale',
+        default_value='75.0',
+        description='Scaling factor for velocity to PWM conversion in open_loop mode'
     )
 
     # Declare the path to files
@@ -90,14 +104,18 @@ def generate_launch_description():
 
     enable_ir_val = PythonExpression(["'true' if ('", mode, "' == 'ir' or '", mode, "' == 'hybrid') else 'false'"])
 
-    # robot_state_publisher setup    
+    # robot_state_publisher setup
     robot_description_config = Command ([
-        'xacro ', 
-        robot_description_xacro_file, 
-        ' use_ros2_control:=', 
+        'xacro ',
+        robot_description_xacro_file,
+        ' use_ros2_control:=',
         use_ros2_control,
         ' enable_ir:=',
-        enable_ir_val
+        enable_ir_val,
+        ' control_mode:=',
+        control_mode,
+        ' velocity_to_pwm_scale:=',
+        velocity_to_pwm_scale
         ])
     
     params = {
@@ -254,6 +272,8 @@ def generate_launch_description():
     ld.add_action(declare_use_ros2_control)
     ld.add_action(declare_mode)
     ld.add_action(declare_rviz)
+    ld.add_action(declare_control_mode)
+    ld.add_action(declare_velocity_to_pwm_scale)
 
     ld.add_action(register_node_ros2_control)
     ld.add_action(register_joint_state_broadcaster_spawner)

@@ -11,8 +11,8 @@ def generate_launch_description():
                 'camera': 0,
                 'role': 'viewfinder',
                 'format': 'RGB888',
-                'width': 320,
-                'height': 240,
+                'width': 640,
+                'height': 480,
                 'FrameDurationLimits': [33333, 33333]
             }]
         )

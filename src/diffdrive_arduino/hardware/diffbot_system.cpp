@@ -14,6 +14,7 @@
 
 #include "diffdrive_arduino/diffbot_system.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <limits>
@@ -58,6 +59,33 @@ hardware_interface::CallbackReturn DiffDriveArduinoHardware::on_init(
   if (info_.hardware_parameters.count("enable_ir") > 0)
   {
     cfg_.enable_ir = (info_.hardware_parameters.at("enable_ir") == "true");
+  }
+
+  // Read control mode parameter
+  if (info_.hardware_parameters.count("control_mode") > 0)
+  {
+    cfg_.control_mode = info_.hardware_parameters.at("control_mode");
+    // Validate control mode
+    if (cfg_.control_mode != "closed_loop" && cfg_.control_mode != "open_loop")
+    {
+      RCLCPP_ERROR(
+        rclcpp::get_logger("DiffDriveArduinoHardware"),
+        "Invalid control_mode '%s'. Must be 'closed_loop' or 'open_loop'. Defaulting to 'closed_loop'.",
+        cfg_.control_mode.c_str());
+      cfg_.control_mode = "closed_loop";
+    }
+    RCLCPP_INFO(
+      rclcpp::get_logger("DiffDriveArduinoHardware"),
+      "Using control mode: %s", cfg_.control_mode.c_str());
+  }
+
+  // Read velocity to PWM scale parameter
+  if (info_.hardware_parameters.count("velocity_to_pwm_scale") > 0)
+  {
+    cfg_.velocity_to_pwm_scale = std::stod(info_.hardware_parameters.at("velocity_to_pwm_scale"));
+    RCLCPP_INFO(
+      rclcpp::get_logger("DiffDriveArduinoHardware"),
+      "Velocity to PWM scale: %.2f", cfg_.velocity_to_pwm_scale);
   }
 
   if (cfg_.enable_ir)
@@ -248,9 +276,26 @@ hardware_interface::return_type diffdrive_arduino ::DiffDriveArduinoHardware::wr
     return hardware_interface::return_type::ERROR;
   }
 
-  int motor_l_counts_per_loop = wheel_l_.cmd / wheel_l_.rads_per_count / cfg_.loop_rate;
-  int motor_r_counts_per_loop = wheel_r_.cmd / wheel_r_.rads_per_count / cfg_.loop_rate;
-  comms_.set_motor_values(motor_l_counts_per_loop, motor_r_counts_per_loop);
+  if (cfg_.control_mode == "open_loop")
+  {
+    // Open-loop mode: Convert velocity commands directly to PWM
+    int motor_l_pwm = static_cast<int>(wheel_l_.cmd * cfg_.velocity_to_pwm_scale);
+    int motor_r_pwm = static_cast<int>(wheel_r_.cmd * cfg_.velocity_to_pwm_scale);
+
+    // Clamp to valid PWM range [-255, 255]
+    motor_l_pwm = std::max(-255, std::min(255, motor_l_pwm));
+    motor_r_pwm = std::max(-255, std::min(255, motor_r_pwm));
+
+    comms_.set_motor_pwm(motor_l_pwm, motor_r_pwm);
+  }
+  else
+  {
+    // Closed-loop mode (default): Use PID control with encoder feedback
+    int motor_l_counts_per_loop = wheel_l_.cmd / wheel_l_.rads_per_count / cfg_.loop_rate;
+    int motor_r_counts_per_loop = wheel_r_.cmd / wheel_r_.rads_per_count / cfg_.loop_rate;
+    comms_.set_motor_values(motor_l_counts_per_loop, motor_r_counts_per_loop);
+  }
+
   return hardware_interface::return_type::OK;
 }
 

@@ -56,6 +56,8 @@ struct Config
   int pid_i = 0;
   int pid_o = 0;
   bool enable_ir = false;
+  std::string control_mode = "closed_loop";
+  double velocity_to_pwm_scale = 75.0;
 };
 
 

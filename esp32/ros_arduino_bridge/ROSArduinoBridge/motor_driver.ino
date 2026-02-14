@@ -114,14 +114,15 @@
 
   void initMotorController() {
     pinMode(STBY_PIN, OUTPUT);
-    
-    pinMode(PWMA, OUTPUT);
+
     pinMode(AIN1, OUTPUT);
     pinMode(AIN2, OUTPUT);
-    
-    pinMode(PWMB, OUTPUT);
     pinMode(BIN1, OUTPUT);
     pinMode(BIN2, OUTPUT);
+
+    // Attach PWM pins with proper frequency for TB6612 (auto channel management)
+    ledcAttach(PWMA, PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttach(PWMB, PWM_FREQUENCY, PWM_RESOLUTION);
 
     // Enable the Motor Driver
     digitalWrite(STBY_PIN, HIGH);
@@ -141,11 +142,12 @@
       digitalWrite(AIN2, LOW); // Brake
     }
     if (speed > 255) speed = 255;
-    analogWrite(PWMA, speed);
+    ledcWrite(PWMA, speed);
   }
 
   // Helper function for Motor B (Right)
   void driveMotorB(int speed) {
+    speed = -speed;  // Invert: right motor is mirror-mounted
     if (speed > 0) {
       digitalWrite(BIN1, HIGH);
       digitalWrite(BIN2, LOW);
@@ -158,7 +160,7 @@
       digitalWrite(BIN2, LOW); // Brake
     }
     if (speed > 255) speed = 255;
-    analogWrite(PWMB, speed);
+    ledcWrite(PWMB, speed);
   }
 
   void setMotorSpeed(int i, int spd) {

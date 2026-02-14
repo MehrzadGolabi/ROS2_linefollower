@@ -103,6 +103,13 @@ public:
     send_msg(ss.str());
   }
 
+  void set_motor_pwm(int pwm_left, int pwm_right)
+  {
+    std::stringstream ss;
+    ss << "o " << pwm_left << " " << pwm_right << "\r";
+    send_msg(ss.str());
+  }
+
   void set_pid_values(int k_p, int k_d, int k_i, int k_o)
   {
     std::stringstream ss;

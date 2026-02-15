@@ -1,6 +1,6 @@
 # ROS 2 Line-Follower Robot
 
-This repository contains the source code and configuration for a high-performance ROS 2 (Jazzy) line-follower robot. It supports both IR-based and Computer Vision-based line following.
+A ROS 2 (Jazzy) line-follower robot. It supports both IR-based and Computer Vision-based line following.
 
 ## Installation & Building
 

@@ -4,6 +4,9 @@ A ROS 2 (Jazzy) line-follower robot. It supports both IR-based and Computer Visi
 
 <img width="1280" height="671" alt="image" src="https://github.com/user-attachments/assets/8c643436-018e-4965-a198-7147e0f2727c" />
 
+<img width="1093" height="650" alt="image" src="https://github.com/user-attachments/assets/dbe35015-f254-4cdc-8d3c-f6d892a05923" />
+
+
 ## Installation & Building
 
 ### Prerequisites
